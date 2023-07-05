@@ -1,4 +1,4 @@
-package com.mtx.metro.dao;
+package com.mtx.metro.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mtx.metro.entity.User;
@@ -13,5 +13,5 @@ import org.springframework.stereotype.Repository;
 public interface UserMapper extends BaseMapper<User> {
 
     //用户登陆
-    Boolean userLogin(@Param("uid") String uid, @Param("pwd") String pwd);
+    User userLogin(@Param("uid") String uid, @Param("pwd") String pwd);
 }

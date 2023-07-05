@@ -1,9 +1,8 @@
 package com.mtx.metro.entity;
 
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import com.mtx.metro.enums.PerEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,15 +13,17 @@ import lombok.NoArgsConstructor;
 @TableName("User")
 public class User {
 
-    @TableId(value = "Id")
-    private String uid;
+    @TableId(type = IdType.AUTO)
+    private String Id;
 
-    @TableField(value = "Name")
-    private String uname;
+    @TableField
+    private String Name;
 
-    @TableField(value = "Password")
-    private String pwd;
+    @TableField
+    private String Password;
 
-    @TableField(value = "Permission")
-    private Permission per;
+    private PerEnum Permission;
+
+    @TableField
+    private String Mail;
 }

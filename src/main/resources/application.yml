@@ -17,6 +17,9 @@ spring:
 mybatis-plus:
   type-aliases-package: com.mtx.metro.entity
   mapper-locations: classpath:/mapper/*.xml
+  type-enums-package: com.mtx.metro.enums
 
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+

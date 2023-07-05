@@ -1,0 +1,29 @@
+package com.mtx.metro.enums;
+
+import com.baomidou.mybatisplus.annotation.IEnum;
+
+import java.util.HashMap;
+
+public enum PerEnum implements IEnum<String> {
+    NORMAL("1","普通用户"),
+    GOV("2","企业用户"),
+    ADMIN("3","管理员");
+
+    private String per;
+    private String desc;
+
+    PerEnum(String per, String desc){
+        this.per = per;
+        this.desc = desc;
+    }
+
+    @Override
+    public String toString(){
+        return desc;
+    }
+
+    @Override
+    public String getValue() {
+        return per;
+    }
+}
