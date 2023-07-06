@@ -20,8 +20,8 @@ public class Result implements Serializable {
     private Object data;//后台所需要携带的数据
 
     //返回一个成功信息
-    public static Result success(String msg){
-        return new Result(CodeConstants.CODE_200000,msg,null);
+    public static Result success(){
+        return new Result(CodeConstants.CODE_200000,"成功",null);
     }
 
     //返回一个成功信息

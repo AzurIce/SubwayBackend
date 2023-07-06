@@ -25,7 +25,6 @@ public class LoginController {
 //    @EnableGlobalMethodSecurity(prePostEnabled = true)
 
     @PostMapping("/login")
-//    @PreAuthorize("hasAnyAuthority('1','2','3')")
     public Result userLogin(@RequestBody LoginDto LoginDto){
         String uname = LoginDto.getUname();
         String pwd = LoginDto.getPwd();
@@ -37,22 +36,20 @@ public class LoginController {
 
     //注册用户
     @PostMapping("/register") //改变数据库数据就用post
-//    @PreAuthorize("hasAnyAuthority('1','2','3')")
     public Result userRegister(@RequestBody RegisterDto registerDto){
         String uname = registerDto.getUname();
         String pwd = registerDto.getPwd();
-        String umail = registerDto.getEmail();
+        String email = registerDto.getEmail();
 
         if(StrUtil.isBlank(uname) || StrUtil.isBlank(pwd)
-                || StrUtil.isBlank(umail)) {
+                || StrUtil.isBlank(email)) {
             throw new ServiceException(CodeConstants.CODE_400000,"参数错误");
         }
         return loginService.register(registerDto);
     }
 
-    @GetMapping("/email/{email}")
-//    @PreAuthorize("hasAnyAuthority('1','2','3')")
-    public Result sendEmailCode(@PathVariable String email){
+    @GetMapping("/email")
+    public Result sendEmailCode(@RequestParam String email){
         if(StrUtil.isBlank(email)) {
             throw new ServiceException(CodeConstants.CODE_400000,"参数错误");
         }
@@ -60,14 +57,13 @@ public class LoginController {
     }
 
     @GetMapping("/check")
-//    @PreAuthorize("hasAnyAuthority('NORMAL_USER','COMPANY_USER','ADMINISTRATOR')")
     public Result checkEmailCode(@RequestBody CheckDto cdto){
-        String email = cdto.getUmail();
+        String email = cdto.getEmail();
         String code = cdto.getCode();
         if(StrUtil.isBlank(email) || StrUtil.isBlank(code)) {
             throw new ServiceException(CodeConstants.CODE_400000,"参数错误");
         }
-        if(loginService.checkEmailCode(cdto)) return Result.success("验证码正确");
+        if(loginService.checkEmailCode(cdto)) return Result.success();
         else return Result.error(CodeConstants.CODE_600000,"验证码错误");
     }
 }

@@ -71,6 +71,7 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
         String userId = loginUser.getUser().getId().toString();
         String jwt = JwtUtil.createJWT(userId);
 
+//        System.out.println(loginUser.getPermissions());
         //authenticate存入redis
         redisCache.setCacheObject("login:"+userId,loginUser);
 

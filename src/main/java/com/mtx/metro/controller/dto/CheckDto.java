@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class CheckDto {
-    private String umail;
+    private String email;
     private String code;
     private String token;
 }
