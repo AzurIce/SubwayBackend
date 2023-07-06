@@ -48,6 +48,7 @@ public class LoginController {
         return loginService.register(registerDto);
     }
 
+    //邮箱验证
     @GetMapping("/email")
     public Result sendEmailCode(@RequestParam String email){
         if(StrUtil.isBlank(email)) {
@@ -56,6 +57,7 @@ public class LoginController {
         return Result.success(loginService.sendEmailCode(email));
     }
 
+    //确认验证码
     @GetMapping("/check")
     public Result checkEmailCode(@RequestBody CheckDto cdto){
         String email = cdto.getEmail();

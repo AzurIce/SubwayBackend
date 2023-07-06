@@ -100,7 +100,7 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
     @Override
     public boolean checkEmailCode(CheckDto cdto) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String email = cdto.getUmail();
+        String email = cdto.getEmail();
         String code = cdto.getCode();
         String token = cdto.getToken();
 

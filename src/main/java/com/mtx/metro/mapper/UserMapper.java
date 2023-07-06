@@ -15,9 +15,6 @@ import java.util.List;
 @Component
 public interface UserMapper extends BaseMapper<User> {
 
-    //用户登陆
-    User userLogin(@Param("uname") String uname, @Param("pwd") String pwd);
-
     //查询权限
     PerEnum selectPermsByUserId(@Param("uid") Long uid);
 }

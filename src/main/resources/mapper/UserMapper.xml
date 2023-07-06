@@ -2,13 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http#{//mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mtx.metro.mapper.UserMapper">
 
-    <!--    用户登陆-->
-    <!--    User userLogin(@Param("uname") String uname, @Param("pwd") String pwd);-->
-    <select id="userLogin" resultType="User">
-        SELECT * FROM User
-        WHERE Name = #{uname} AND Password = #{pwd}
-    </select>
-
 <!--    //查询权限-->
 <!--    List<String> selectPermsByUserId(@Param("uid") Long uid);-->
     <select id="selectPermsByUserId" resultType="com.mtx.metro.enums.PerEnum">
