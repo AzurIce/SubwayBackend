@@ -3,10 +3,10 @@
 <mapper namespace="com.mtx.metro.mapper.UserMapper">
 
     <!--    用户登陆-->
-    <!--    User userLogin(@Param("uid") String uid, @Param("pwd") String pwd);-->
+    <!--    User userLogin(@Param("uname") String uname, @Param("pwd") String pwd);-->
     <select id="userLogin" resultType="User">
         SELECT * FROM User
-        WHERE Id = #{uid} AND Password = #{pwd}
+        WHERE Name = #{uname} AND Password = #{pwd}
     </select>
 
 </mapper>
