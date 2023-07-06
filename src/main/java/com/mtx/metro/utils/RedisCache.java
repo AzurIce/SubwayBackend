@@ -12,8 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @SuppressWarnings(value = { "unchecked", "rawtypes" })
-public class RedisCache
-{
+public class RedisCache {
     @Autowired
     public RedisTemplate redisTemplate;
 

@@ -14,22 +14,22 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class UserDetailsServiceImpl extends ServiceImpl<UserMapper, User> implements UserDetailsService {
     @Autowired
     private UserMapper userMapper;
 
-    public User getUserInfoByNamePwd(LoginDto loginDto){
-        User one;
-        try{
-            one = userMapper.userLogin(loginDto.getUname(),loginDto.getPwd());
-        }catch (Exception e){
-            log.error(e.toString());
-            throw new ServiceException(CodeConstants.CODE_500000,"系统错误");
-        }return one;
-    }
+//    public User getUserInfoByNamePwd(LoginDto loginDto){
+//        User one;
+//        try{
+//            one = userMapper.userLogin(loginDto.getUname(),loginDto.getPwd());
+//        }catch (Exception e){
+//            log.error(e.toString());
+//            throw new ServiceException(CodeConstants.CODE_500000,"系统错误");
+//        }return one;
+//    }
 
 //    @Override
 //    @Transactional
@@ -57,8 +57,9 @@ public class UserDetailsServiceImpl extends ServiceImpl<UserMapper, User> implem
             throw new ServiceException(CodeConstants.CODE_600000,"用户名或密码错误");
         }
         //TODO 根据用户查询权限信息 添加到LoginUser中
+        List<String> permissionKeyList = Collections.singletonList(userMapper.selectPermsByUserId(user.getId()).toString());
 
         //封装成UserDetails对象返回
-        return new LoginUser(user);
+        return new LoginUser(user,permissionKeyList);
     }
 }

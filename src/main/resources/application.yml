@@ -21,13 +21,19 @@ spring:
         max-wait: -1s
         max-active: -1
 
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     name: '@123.60.53.131'
     url: jdbc:mysql://123.60.53.131:3306/NewYork?serverTimezone=GMT
     username: 'xyh'
     password: '2023ShiXun'
+
+  mail:
+    protocol: smtps
+    host: smtp.qq.com
+    username: 845796811@qq.com
+    password: mytgnpzfynrcbded
+    default-encoding: UTF-8
 
   main:
     #    banner-mode: off

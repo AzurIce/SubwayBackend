@@ -9,4 +9,11 @@
         WHERE Name = #{uname} AND Password = #{pwd}
     </select>
 
+<!--    //查询权限-->
+<!--    List<String> selectPermsByUserId(@Param("uid") Long uid);-->
+    <select id="selectPermsByUserId" resultType="com.mtx.metro.enums.PerEnum">
+        SELECT Permission FROM User
+        WHERE Id = #{uid}
+    </select>
+
 </mapper>
