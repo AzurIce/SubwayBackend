@@ -41,6 +41,7 @@ public class LoginUser implements UserDetails {
         authorities = permissions.stream().
                 map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+        System.out.println("authorities in LoginUser"+authorities);
         return authorities;
     }
 

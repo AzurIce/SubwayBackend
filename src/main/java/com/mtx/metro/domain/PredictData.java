@@ -15,7 +15,7 @@ public class PredictData {
 
     @TableField("dateTime")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date dateTime;
+    private String dateTime;
 
     @TableField("pEntries")
     private Integer pEntries;

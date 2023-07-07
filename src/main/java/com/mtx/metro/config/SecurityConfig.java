@@ -48,13 +48,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                // 对于登录接口 允许匿名访问
+                    // 对于登录接口 允许匿名访问
                 .antMatchers("/user/login").anonymous()
                 .antMatchers("/user/register").anonymous()
                 .antMatchers("/user/email").anonymous()
                 .antMatchers("/user/check").anonymous()
-                // 除上面外的所有请求全部需要鉴权认证
-                .anyRequest().authenticated();
+
+                .antMatchers("/predict/all").permitAll()
+                .antMatchers("/true/at").permitAll()
+                .antMatchers("/true/all").permitAll()
+//              .antMatchers("/predict/all").hasAnyAuthority("1","2","3")
+
+                    // 除上面外的所有请求全部需要鉴权认证
+                    .anyRequest().authenticated();
 
         //把token校验过滤器添加到过滤器链中
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);

@@ -5,9 +5,10 @@ import com.baomidou.mybatisplus.annotation.IEnum;
 import java.util.HashMap;
 
 public enum PerEnum implements IEnum<String> {
-    NORMAL_USER("1","NORMAL_USER"),
-    COMPANY_USER("2","COMPANY_USER"),
-    ADMINISTRATOR("3","ADMINISTRATOR");
+    ROLE_NORMAL("1","ROLE_NORMAL"),
+    ROLE_COMPANY("2","ROLE_COMPANY"),
+    ROLE_ADMIN("3","ROLE_ADMIN");
+    //"ROLE_NORMAL","ROLE_COMPANY","ROLE_ADMIN"
 
     private String per;
     private String desc;

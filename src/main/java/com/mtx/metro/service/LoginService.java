@@ -12,8 +12,6 @@ public interface LoginService extends IService<User> {
 
     Result register(RegisterDto registerDto);
 
-    boolean checkEmailCode(CheckDto cdto);
-
     String sendEmailCode(String email);
 
     Result logout();

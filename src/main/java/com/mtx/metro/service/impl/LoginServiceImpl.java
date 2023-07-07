@@ -26,6 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -57,6 +58,7 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
     }
 
     @Override
+    @Transactional
     public Result login(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getUname(),loginDto.getPwd());
@@ -82,34 +84,33 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
     }
 
     @Override
+    @Transactional
     public Result register(RegisterDto rdto) {
         User one = getUserInfoByName(rdto);
 
         if(one == null){
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            User user = new User();
-            user.setName(rdto.getUname());
-            user.setPassword(passwordEncoder.encode(rdto.getPwd()));
-            user.setMail(rdto.getEmail());
-            save(user);
+            if(checkEmailCode(rdto.getEmail(),rdto.getToken(),rdto.getCode())){
+                BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                User user = new User();
+                user.setName(rdto.getUname());
+                user.setPassword(passwordEncoder.encode(rdto.getPwd()));
+                user.setMail(rdto.getEmail());
+                save(user);
+            }
         }else throw new ServiceException(CodeConstants.CODE_600000,"用户名已存在");
 
         return Result.success(getUserInfoByName(rdto));
     }
 
-    @Override
-    public boolean checkEmailCode(CheckDto cdto) {
+
+    public boolean checkEmailCode(String email,String token,String code) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String email = cdto.getEmail();
-        String code = cdto.getCode();
-        String token = cdto.getToken();
-
         String mailCode = email + code;
-
         return passwordEncoder.matches(mailCode, token);
     }
 
     @Override
+    @Transactional
     public String sendEmailCode(String email) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(from);
@@ -126,6 +127,7 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
     }
 
     @Override
+    @Transactional
     public Result logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();

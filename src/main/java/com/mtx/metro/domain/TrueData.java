@@ -17,7 +17,7 @@ public class TrueData {
 
     @TableField("dateTime")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date dateTime;
+    private String dateTime;
 
     @TableField("tEntries")
     private Integer tEntries;

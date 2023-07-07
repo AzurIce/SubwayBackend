@@ -40,9 +40,12 @@ public class LoginController {
         String uname = registerDto.getUname();
         String pwd = registerDto.getPwd();
         String email = registerDto.getEmail();
+        String token = registerDto.getToken();
+        String code = registerDto.getCode();
 
         if(StrUtil.isBlank(uname) || StrUtil.isBlank(pwd)
-                || StrUtil.isBlank(email)) {
+                || StrUtil.isBlank(email) || StrUtil.isBlank(token)
+                || StrUtil.isBlank(code)) {
             throw new ServiceException(CodeConstants.CODE_400000,"参数错误");
         }
         return loginService.register(registerDto);
@@ -55,17 +58,5 @@ public class LoginController {
             throw new ServiceException(CodeConstants.CODE_400000,"参数错误");
         }
         return Result.success(loginService.sendEmailCode(email));
-    }
-
-    //确认验证码
-    @GetMapping("/check")
-    public Result checkEmailCode(@RequestBody CheckDto cdto){
-        String email = cdto.getEmail();
-        String code = cdto.getCode();
-        if(StrUtil.isBlank(email) || StrUtil.isBlank(code)) {
-            throw new ServiceException(CodeConstants.CODE_400000,"参数错误");
-        }
-        if(loginService.checkEmailCode(cdto)) return Result.success();
-        else return Result.error(CodeConstants.CODE_600000,"验证码错误");
     }
 }

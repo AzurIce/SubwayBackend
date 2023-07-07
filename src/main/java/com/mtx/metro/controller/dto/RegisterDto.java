@@ -7,4 +7,6 @@ public class RegisterDto {
     private String uname;
     private String pwd;
     private String email;
+    private String token;
+    private String code;
 }
