@@ -16,5 +16,15 @@ public interface UserService extends IService<User> {
 
     Page<User> getUserByID(Page<User> page, String uid);
 
+    boolean deleteUserById(String uid);
+
+    boolean updateUserName(String id,String name);
+
+    boolean updateUserPwd(String id,String pwd);
+
+    boolean updateUserPer(String id,String per);
+
+    boolean updateUserEmail(String id,String email);
+
     Result logout();
 }

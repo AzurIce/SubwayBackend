@@ -130,6 +130,47 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    public boolean deleteUserById(String uid) {
+        return removeById(uid);
+    }
+
+    @Override
+    public boolean updateUserName(String id,String name) {
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(User::getId,id).set(User::getName,name);
+        int flag = userMapper.update(null,wrapper);
+        if(flag >= 1) return true;
+        else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+    }
+
+    @Override
+    public boolean updateUserPwd(String id,String pwd) {
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(User::getId,id).set(User::getPassword,pwd);
+        int flag = userMapper.update(null,wrapper);
+        if(flag >= 1) return true;
+        else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+    }
+
+    @Override
+    public boolean updateUserPer(String id,String per) {
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(User::getId,id).set(User::getPermission,per);
+        int flag = userMapper.update(null,wrapper);
+        if(flag >= 1) return true;
+        else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+    }
+
+    @Override
+    public boolean updateUserEmail(String id,String email) {
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(User::getId,id).set(User::getMail,email);
+        int flag = userMapper.update(null,wrapper);
+        if(flag >= 1) return true;
+        else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+    }
+
+    @Override
     @Transactional
     public Result logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
