@@ -1,4 +1,4 @@
-package com.mtx.metro.domain;
+package com.mtx.metro.utils;
 
 import com.mtx.metro.constants.CodeConstants;
 import lombok.AllArgsConstructor;
@@ -21,12 +21,12 @@ public class Result implements Serializable {
 
     //返回一个成功信息
     public static Result success(){
-        return new Result(CodeConstants.CODE_200000,"成功",null);
+        return new Result(CodeConstants.CODE_200000,"操作成功",null);
     }
 
     //返回一个成功信息
     public static Result success(Object data){
-        return new Result(CodeConstants.CODE_200000,"成功",data);
+        return new Result(CodeConstants.CODE_200000,"操作成功",data);
     }
 
     //系统错误

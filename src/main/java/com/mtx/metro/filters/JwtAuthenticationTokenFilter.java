@@ -1,7 +1,7 @@
 package com.mtx.metro.filters;
 
 import com.mtx.metro.utils.RedisCache;
-import com.mtx.metro.domain.LoginUser;
+import com.mtx.metro.utils.LoginUser;
 import com.mtx.metro.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.mtx.metro.domain;
+package com.mtx.metro.utils;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.mtx.metro.domain.User;

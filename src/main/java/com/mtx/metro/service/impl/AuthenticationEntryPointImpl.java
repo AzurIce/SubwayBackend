@@ -1,9 +1,8 @@
 package com.mtx.metro.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.mtx.metro.domain.Result;
+import com.mtx.metro.utils.Result;
 import com.mtx.metro.utils.WebUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;

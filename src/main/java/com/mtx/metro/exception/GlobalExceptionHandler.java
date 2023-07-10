@@ -1,6 +1,6 @@
 package com.mtx.metro.exception;
 
-import com.mtx.metro.domain.Result;
+import com.mtx.metro.utils.Result;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;

@@ -2,22 +2,22 @@ package com.mtx.metro.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtx.metro.constants.CodeConstants;
-import com.mtx.metro.controller.dto.CheckDto;
 import com.mtx.metro.controller.dto.RegisterDto;
-import com.mtx.metro.domain.Result;
+import com.mtx.metro.service.UserEmailService;
+import com.mtx.metro.utils.Result;
 import com.mtx.metro.exception.ServiceException;
 import com.mtx.metro.utils.RedisCache;
 import com.mtx.metro.controller.dto.LoginDto;
-import com.mtx.metro.domain.LoginUser;
+import com.mtx.metro.utils.LoginUser;
 import com.mtx.metro.domain.User;
 import com.mtx.metro.mapper.UserMapper;
-import com.mtx.metro.service.LoginService;
+import com.mtx.metro.service.UserService;
 import com.mtx.metro.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,21 +33,21 @@ import java.util.HashMap;
 import java.util.Objects;
 
 @Service
-public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements LoginService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
     private RedisCache redisCache;
     @Autowired
-    private JavaMailSender javaMailSender;
+    private UserEmailServiceImpl userEmailService;
 
-    @Value("${spring.mail.username}")
-    private String from;
+    @Autowired
+    private UserMapper userMapper;
 
-    public User getUserInfoByName(RegisterDto rdto){
+    public User getUserInfoByName(String name){
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(User::getName,rdto.getUname());
+        wrapper.eq(User::getName,name);
         User one;
         try{
             one = getOne(wrapper);
@@ -56,6 +56,19 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
             throw new ServiceException(CodeConstants.CODE_500000,"系统错误");
         }return one;
     }
+
+    public User getUserInfoByID(String uid){
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(User::getId,uid);
+        User one;
+        try{
+            one = getOne(wrapper);
+        }catch (Exception e){
+            log.error(e.toString());
+            throw new ServiceException(CodeConstants.CODE_500000,"系统错误");
+        }return one;
+    }
+
 
     @Override
     @Transactional
@@ -73,7 +86,6 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
         String userId = loginUser.getUser().getId().toString();
         String jwt = JwtUtil.createJWT(userId);
 
-//        System.out.println(loginUser.getPermissions());
         //authenticate存入redis
         redisCache.setCacheObject("login:"+userId,loginUser);
 
@@ -86,10 +98,10 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
     @Override
     @Transactional
     public Result register(RegisterDto rdto) {
-        User one = getUserInfoByName(rdto);
+        User one = getUserInfoByName(rdto.getUname());
 
         if(one == null){
-            if(checkEmailCode(rdto.getEmail(),rdto.getToken(),rdto.getCode())){
+            if(userEmailService.checkEmailCode(rdto.getEmail(),rdto.getToken(),rdto.getCode())){
                 BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
                 User user = new User();
                 user.setName(rdto.getUname());
@@ -99,31 +111,22 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
             }
         }else throw new ServiceException(CodeConstants.CODE_600000,"用户名已存在");
 
-        return Result.success(getUserInfoByName(rdto));
-    }
-
-
-    public boolean checkEmailCode(String email,String token,String code) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String mailCode = email + code;
-        return passwordEncoder.matches(mailCode, token);
+        return Result.success(getUserInfoByName(rdto.getUname()));
     }
 
     @Override
     @Transactional
-    public String sendEmailCode(String email) {
-        SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setFrom(from);
-        msg.setTo(email);
-        msg.setSentDate(new Date());
-        msg.setSubject("【地铁客流量预测系统】登录邮箱验证");
-        String code = RandomUtil.randomNumbers(6);
-        msg.setText("您本次登录的验证码为：" + code + "，有效期5分钟，请妥善保管，切勿泄露。");
-        javaMailSender.send(msg);
+    public Page<User> getAllUserInfo(Page<User> page) {
+        return userMapper.selectAllUserInfo(page);
+    }
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String mailCode = email + code;
-        return passwordEncoder.encode(mailCode);
+    @Override
+    @Transactional
+    public Page<User> getUserByID(Page<User> page, String uid) {
+        User one = getUserInfoByID(uid);
+        if(one != null){
+            return userMapper.selectUserByID(page,uid);
+        }else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
     }
 
     @Override

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
 import java.io.Serializable;
 
 /**
@@ -43,5 +44,6 @@ public class User implements Serializable {
      * 邮箱
      */
     @TableField
+    @Email(message = "邮箱格式不正确")
     private String Mail;
 }

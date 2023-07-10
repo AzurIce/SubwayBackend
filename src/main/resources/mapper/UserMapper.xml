@@ -9,4 +9,17 @@
         WHERE Id = #{uid}
     </select>
 
+<!--    //查询全部用户，并分页-->
+<!--    Page<User> selectAllUserInfo(@Param("page") Page<User> page);-->
+    <select id="selectAllUserInfo" resultType="User">
+        SELECT * FROM User
+    </select>
+
+<!--    //按照用户id查询用户，并分页-->
+<!--    Page<User> selectUserByID(@Param("page") Page<User> page,@Param("uid") String uid);-->
+    <select id="selectAllUserInfo" resultType="User">
+        SELECT * FROM User
+        WHERE Id = #{uid}
+    </select>
+
 </mapper>
