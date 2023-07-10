@@ -38,7 +38,7 @@ public class User implements Serializable {
     /**
      * 用户权限
      */
-    private PerEnum Permission;
+    private String Permission;
     /**
      * 邮箱
      */

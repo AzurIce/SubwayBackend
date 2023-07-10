@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,7 +17,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-//@EnableWebSecurity //注解代替继承
+@EnableWebSecurity //注解代替继承
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -54,10 +56,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/email").anonymous()
                 .antMatchers("/user/check").anonymous()
 
-                .antMatchers("/predict/all").permitAll()
-                .antMatchers("/true/at").permitAll()
-                .antMatchers("/true/all").permitAll()
-//              .antMatchers("/predict/all").hasAnyAuthority("1","2","3")
+//                .antMatchers("/predict/all").permitAll()
+//                .antMatchers("/true/at").permitAll()
+//                .antMatchers("/true/all").permitAll()
+//                .antMatchers("/predict/all").hasAnyAuthority("1","2","3")
+//                .antMatchers("/true/at").hasAnyAuthority("1","2","3")
+//                .antMatchers("/true/all").hasAnyAuthority("1","2","3")
 
                     // 除上面外的所有请求全部需要鉴权认证
                     .anyRequest().authenticated();

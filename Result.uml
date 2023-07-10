@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>com.mtx.metro.domain.Result</OriginalElement>
+  <nodes>
+    <node x="249.74999999999994" y="89.31699846860641">com.mtx.metro.domain.Result</node>
+    <node x="416.99999999999994" y="0.0">lombok.Data</node>
+    <node x="209.99999999999994" y="0.0">lombok.AllArgsConstructor</node>
+    <node x="523.0" y="0.0">java.io.Serializable</node>
+    <node x="0.0" y="0.0">lombok.NoArgsConstructor</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.mtx.metro.domain.Result" target="java.io.Serializable" relationship="REALIZATION">
+      <point x="53.75" y="-74.5" />
+      <point x="410.99999999999994" y="60.0" />
+      <point x="589.5" y="60.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.mtx.metro.domain.Result" target="lombok.Data" relationship="ANNOTATION">
+      <point x="-53.75" y="-74.5" />
+      <point x="303.49999999999994" y="50.0" />
+      <point x="459.99999999999994" y="50.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.mtx.metro.domain.Result" target="lombok.AllArgsConstructor" relationship="ANNOTATION">
+      <point x="-53.75" y="-74.5" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.mtx.metro.domain.Result" target="lombok.NoArgsConstructor" relationship="ANNOTATION">
+      <point x="-53.75" y="-74.5" />
+      <point x="303.49999999999994" y="50.0" />
+      <point x="95.0" y="50.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+  </edges>
+  <settings layout="分层" zoom="0.9659763313609467" showDependencies="false" x="328.0" y="114.5" />
+  <SelectedNodes>
+    <node>com.mtx.metro.domain.Result</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>字段</Category>
+    <Category>构造函数</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

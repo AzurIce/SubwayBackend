@@ -34,20 +34,12 @@ public class UserDetailsServiceImpl extends ServiceImpl<UserMapper, User> implem
             throw new ServiceException(CodeConstants.CODE_600000,"用户名或密码错误");
         }
 
-        String qaq = userMapper.selectPermsByUserId(user.getId()).toString();
-        String qwq = userMapper.selectPermsByUserId(user.getId()).getValue();
-        System.out.println("getvalue:" + qwq);
-        System.out.println("tostring: " + qaq);
-
         //TODO 根据用户查询权限信息 添加到LoginUser中
         List<String> permissionKeyList =
                 Collections.singletonList(
-                        qwq);
+                        userMapper.selectPermsByUserId(user.getId()).toString());
 
         //封装成UserDetails对象返回
         return new LoginUser(user,permissionKeyList);
-//        return new LoginUser(user,
-//                AuthorityUtils.commaSeparatedStringToAuthorityList(
-//                        userMapper.selectPermsByUserId(user.getId()).toString()));
     }
 }

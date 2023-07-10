@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class LoginController {
 
-//    @Autowired
-//    private UserDetailsServiceImpl userService;
-
     @Autowired
     private LoginServiceImpl loginService;
 

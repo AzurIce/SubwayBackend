@@ -18,11 +18,13 @@ public class TrueController {
     private TrueServiceImpl trueService;
 
     @GetMapping("/all")
+    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
     public Result selectAll(){
         return Result.success(trueService.selectAll());
     }
 
     @GetMapping("/at")
+    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
     public Result selectAtATime(@RequestParam String dateTime){
         return Result.success(trueService.selectAtATime(dateTime));
     }

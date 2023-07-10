@@ -24,7 +24,7 @@ public class LoginUser implements UserDetails {
     private List<String> permissions;
 
     //存储SpringSecurity所需要的权限信息的集合
-    @JSONField(serialize = false)
+    @JSONField(serialize = false) //不会序列化到Redis当中
     private List<GrantedAuthority> authorities;
 
     public LoginUser(User user,List<String> permissions) {
@@ -41,7 +41,7 @@ public class LoginUser implements UserDetails {
         authorities = permissions.stream().
                 map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
-        System.out.println("authorities in LoginUser"+authorities);
+        System.out.println("!!!!!!authorities in LoginUser"+authorities);
         return authorities;
     }
 

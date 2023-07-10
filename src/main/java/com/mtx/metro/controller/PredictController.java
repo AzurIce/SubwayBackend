@@ -21,15 +21,10 @@ import java.util.Date;
 public class PredictController {
     @Autowired
     private PredictService predictService;
-//    @Autowired
-//    private UserMapper userMapper;
 
     @GetMapping("/all")
-    @PreAuthorize("hasAnyAuthority('1','2','3')")
-//    @PreAuthorize("hasAnyAuthority('NORMAL_USER','COMPANY_USER','ADMINISTRATOR')")
+    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
     public Result selectAll(){
-//        String qaq = userMapper.selectPermsByUserId(id).getValue();
-//        System.out.println(qaq);
         return Result.success(predictService.selectAll());
     }
 }
