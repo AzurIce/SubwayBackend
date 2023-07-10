@@ -16,5 +16,6 @@ import java.util.List;
 @Repository
 @Component
 public interface PredictMapper extends BaseMapper<PredictData> {
+
     List<PredictData> selectAll();
 }

@@ -13,4 +13,9 @@
         WHERE dateTime = #{dateTime}
     </select>
 
+    <!--    TimeRange getTimeRange();-->
+    <select id="getTimeRange" resultType="com.mtx.metro.domain.TimeRange">
+        SELECT * FROM timeRange
+    </select>
+
 </mapper>

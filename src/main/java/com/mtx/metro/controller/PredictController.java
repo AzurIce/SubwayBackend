@@ -27,4 +27,5 @@ public class PredictController {
     public Result selectAll(){
         return Result.success(predictService.selectAll());
     }
+
 }

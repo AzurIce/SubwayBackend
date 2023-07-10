@@ -15,8 +15,10 @@ public class PredictServiceImpl extends ServiceImpl<PredictMapper, PredictData> 
 
     @Autowired
     private PredictMapper predictMapper;
+
     @Override
     public List<PredictData> selectAll() {
         return predictMapper.selectAll();
     }
+
 }
