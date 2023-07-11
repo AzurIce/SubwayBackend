@@ -53,7 +53,8 @@ public class UserController {
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Result getAllUserInfo(){
-        return Result.success(userService.getAllUserInfo(new Page<>(1,2)));
+//        return Result.success(userService.getAllUserInfo(new Page<>(1,2)));
+        return Result.success(userService.getAllUserInfo());
     }
 
     //根据id查询用户信息!!
@@ -62,7 +63,7 @@ public class UserController {
     public Result getStuByID(@RequestParam @Valid
                                  @NotBlank(message = "用户id不能为空")
                                          String uid){
-        return Result.success(userService.getUserByID(new Page<>(1,5),uid));
+        return Result.success(userService.getUserByID(uid));
     }
 
     //删除用户信息!!

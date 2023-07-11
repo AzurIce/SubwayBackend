@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -116,16 +117,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional
-    public Page<User> getAllUserInfo(Page<User> page) {
-        return userMapper.selectAllUserInfo(page);
+    public List<User> getAllUserInfo() {
+        return userMapper.selectAllUserInfo();
     }
 
     @Override
     @Transactional
-    public Page<User> getUserByID(Page<User> page, String uid) {
+    public User getUserByID(String uid) {
         User one = getUserInfoByID(uid);
         if(one != null){
-            return userMapper.selectUserByID(page,uid);
+            return userMapper.selectUserByID(uid);
         }else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
     }
 

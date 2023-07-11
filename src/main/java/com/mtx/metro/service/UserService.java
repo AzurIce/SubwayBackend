@@ -7,14 +7,16 @@ import com.mtx.metro.utils.Result;
 import com.mtx.metro.controller.dto.LoginDto;
 import com.mtx.metro.domain.User;
 
+import java.util.List;
+
 public interface UserService extends IService<User> {
     Result login(LoginDto loginDto);
 
     Result register(RegisterDto registerDto);
 
-    Page<User> getAllUserInfo(Page<User> page);
+    List<User> getAllUserInfo();
 
-    Page<User> getUserByID(Page<User> page, String uid);
+    User getUserByID(String uid);
 
     boolean deleteUserById(String uid);
 

@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Mapper
 @Repository
@@ -19,8 +21,8 @@ public interface UserMapper extends BaseMapper<User> {
     PerEnum selectPermsByUserId(@Param("uid") Long uid);
 
     //查询全部用户，并分页
-    Page<User> selectAllUserInfo(@Param("page") Page<User> page);
+    List<User> selectAllUserInfo();
 
     //按照用户id查询用户，并分页
-    Page<User> selectUserByID(@Param("page") Page<User> page,@Param("uid") String uid);
+    User selectUserByID(@Param("uid") String uid);
 }
