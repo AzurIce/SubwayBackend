@@ -15,6 +15,8 @@ public interface DataService extends IService<Map<String,String>> {
 
     Map<String,String> getTimeRange();
 
-    Map<String,String> getStationInfo(String GTFSid);
+    Map<String,String> getThresholdInfo(String GTFSid);
+
+    List<Map<String, String>> getWarningInfo(String dateTime);
 
 }

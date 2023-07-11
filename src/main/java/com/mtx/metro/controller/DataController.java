@@ -5,6 +5,7 @@ import com.mtx.metro.constants.CodeConstants;
 import com.mtx.metro.utils.Result;
 import com.mtx.metro.service.impl.DataServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,12 +56,19 @@ public class DataController {
     }
 
     //某GTFSid的站点信息
-//    @GetMapping("/station")
-//    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
-//    public Result getStationInfo(@RequestParam String GTFSid){
-//        if(StrUtil.isBlank(GTFSid)) {
-//            return Result.error(CodeConstants.CODE_400000,"参数错误");
-//        }
-//        return Result.success(dataService.getStationInfo(GTFSid));
-//    }
+    @GetMapping("/threshold")
+    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
+    public Result getThresholdInfo(@RequestParam
+                                       @Valid @NotBlank(message = "站名不能为空")
+                                               String GTFSid){
+        return Result.success(dataService.getThresholdInfo(GTFSid));
+    }
+
+    @GetMapping("/warning")
+    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
+    public Result getWarningInfo(@RequestParam
+                                   @Valid @NotBlank(message = "日期时间不能为空")
+                                           String dateTime){
+        return Result.success(dataService.getWarningInfo(dateTime));
+    }
 }

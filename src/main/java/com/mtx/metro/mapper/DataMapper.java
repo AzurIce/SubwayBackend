@@ -26,6 +26,9 @@ public interface DataMapper extends BaseMapper<Map<String,String>> {
     //查询时间范围
     Map<String,String> getTimeRange();
 
-    //查询站点数据：站名，经纬度，具体客流量，预测客流量
-    Map<String,String> getStationInfo(@Param("GTFSid") String GTFSid);
+    //查询某站点avg、max客流数据
+    Map<String,String> getThresholdInfo(@Param("GTFSid") String GTFSid);
+
+    //查询某日期时间的流量预警信息
+    List<Map<String,String>> getWarningInfo(@Param("dateTime") String dateTime);
 }

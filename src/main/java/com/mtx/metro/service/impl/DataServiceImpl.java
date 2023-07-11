@@ -31,8 +31,13 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     }
 
     @Override
-    public Map<String,String> getStationInfo(String GTFSid) {
-        return dataMapper.getStationInfo(GTFSid);
+    public Map<String,String> getThresholdInfo(String GTFSid) {
+        return dataMapper.getThresholdInfo(GTFSid);
+    }
+
+    @Override
+    public List<Map<String, String>> getWarningInfo(String dateTime) {
+        return dataMapper.getWarningInfo(dateTime);
     }
 
     @Override

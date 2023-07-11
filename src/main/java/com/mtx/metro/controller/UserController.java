@@ -53,7 +53,6 @@ public class UserController {
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Result getAllUserInfo(){
-//        return Result.success(userService.getAllUserInfo(new Page<>(1,2)));
         return Result.success(userService.getAllUserInfo());
     }
 
@@ -96,9 +95,6 @@ public class UserController {
                                 @RequestParam
                                     @Valid @NotBlank(message = "新密码不能为空")
                                             String pwd){
-        if(StrUtil.isBlank(id) || StrUtil.isBlank(pwd)) {
-            return Result.error(CodeConstants.CODE_400000,"参数错误");
-        }
         return Result.success(userService.updateUserPwd(id,pwd));
     }
 
