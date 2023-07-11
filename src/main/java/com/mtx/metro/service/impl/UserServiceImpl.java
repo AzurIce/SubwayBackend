@@ -28,7 +28,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -130,29 +129,47 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional
     public boolean deleteUserById(String uid) {
         return removeById(uid);
     }
 
     @Override
+    @Transactional
     public boolean updateUserName(String id,String name) {
-        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(User::getId,id).set(User::getName,name);
-        int flag = userMapper.update(null,wrapper);
-        if(flag >= 1) return true;
-        else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+        User one = getUserInfoByName(name);
+        if(one == null){
+            LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+            wrapper.eq(User::getId,id).set(User::getName,name);
+            int flag = userMapper.update(null,wrapper);
+            if(flag >= 1) return true;
+            else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+        }else throw new ServiceException(CodeConstants.CODE_600000,"用户名已存在");
     }
 
     @Override
+    @Transactional
     public boolean updateUserPwd(String id,String pwd) {
-        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(User::getId,id).set(User::getPassword,pwd);
-        int flag = userMapper.update(null,wrapper);
-        if(flag >= 1) return true;
-        else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+        User one = getUserInfoByID(id);
+        if(one != null){
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+            if(!passwordEncoder.matches(pwd,one.getPassword())){
+                String token = passwordEncoder.encode(pwd);
+
+                LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+                wrapper.eq(User::getId,id).set(User::getPassword,token);
+
+                int flag = userMapper.update(null,wrapper);
+                if(flag >= 1) return true;
+                else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+            }else throw new ServiceException(CodeConstants.CODE_600000,"密码相同");
+        }else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+
     }
 
     @Override
+    @Transactional
     public boolean updateUserPer(String id,String per) {
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId,id).set(User::getPermission,per);
@@ -162,6 +179,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional
     public boolean updateUserEmail(String id,String email) {
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId,id).set(User::getMail,email);

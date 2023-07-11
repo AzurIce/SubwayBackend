@@ -17,7 +17,7 @@
 
 <!--    //按照用户id查询用户，并分页-->
 <!--    Page<User> selectUserByID(@Param("page") Page<User> page,@Param("uid") String uid);-->
-    <select id="selectAllUserInfo" resultType="User">
+    <select id="selectUserByID" resultType="User">
         SELECT * FROM User
         WHERE Id = #{uid}
     </select>

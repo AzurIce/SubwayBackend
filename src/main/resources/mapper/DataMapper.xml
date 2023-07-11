@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http#{//mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mtx.metro.mapper.DataMapper">
+
+<!--    //查询所有真实数据-->
+<!--    List<Map<String,String>> selectAllTrueData();-->
+    <select id="selectAllTrueData" resultType="Map">
+        SELECT * FROM TrueData
+    </select>
+
+<!--    //根据日期时间查询真实数据-->
+<!--    List<Map<String,String>> selectAtATime(@Param("dateTime") String dateTime);-->
+    <select id="selectAtATime" resultType="Map">
+        SELECT * FROM TrueData
+        WHERE dateTime = #{dateTime}
+    </select>
+
+<!--    //查询预测数据-->
+<!--    List<Map<String,String>> selectAllPredictData();-->
+    <select id="selectAllPredictData" resultType="Map">
+        SELECT * FROM PredictData
+    </select>
+
+<!--    //查询时间范围-->
+<!--    Map<String,String> getTimeRange();-->
+    <select id="getTimeRange" resultType="Map">
+        SELECT * FROM timeRange
+    </select>
+
+<!--    //查询站点数据：站名，经纬度-->
+<!--    Map<String,String> getStationInfo(@Param("GTFSid") String GTFSid);-->
+    <select id="getStationInfo" resultType="Map">
+        SELECT GTFS_Stop_ID,
+            Stop_Name,
+            GTFS_Latitude,
+            GTFS_Longitude
+        FROM Stations
+        WHERE GTFS_Stop_ID = #{GTFSid}
+    </select>
+
+</mapper>

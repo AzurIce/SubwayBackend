@@ -10,10 +10,16 @@ spring:
     port: 6379
     password: 123456
     database: 0
-    connect-timeout:
-    sentinel:
-      master:
-        nodes:
+    timeout: 5000
+#    lettuce:
+#      pool:
+#        MaxTotal: 50 #最大连接数
+#        minIdle: 1
+#        maxWaitMillis: 5000
+#        maxIdle: 5
+#        testOnBorrow: true
+#        testOnReturn: true
+#        testWhileIdle: true
     jedis:
       pool:
         max-idle: 500
