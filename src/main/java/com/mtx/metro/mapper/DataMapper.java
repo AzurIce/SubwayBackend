@@ -18,10 +18,10 @@ public interface DataMapper extends BaseMapper<Map<String,String>> {
     List<Map<String,String>> selectAllTrueData();
 
     //根据日期时间查询真实数据
-    List<Map<String,String>> selectAtATime(@Param("dateTime") String dateTime);
+    List<Map<String,String>> TrueDataAtTimeStation(@Param("dateTime") String dateTime,@Param("GTFSid") String GTFSid);
 
     //查询预测数据
-    List<Map<String,String>> selectAllPredictData();
+    List<Map<String,String>> PredictDataAtStation(@Param("GTFSid") String GTFSid);
 
     //查询时间范围
     Map<String,String> getTimeRange();

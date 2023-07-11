@@ -21,8 +21,8 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     }
 
     @Override
-    public List<Map<String,String>> selectAtATime(String dateTime) {
-        return dataMapper.selectAtATime(dateTime);
+    public List<Map<String,String>> TrueDataAtTimeStation(String dateTime,String GTFSid) {
+        return dataMapper.TrueDataAtTimeStation(dateTime,GTFSid);
     }
 
     @Override
@@ -36,8 +36,8 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     }
 
     @Override
-    public List<Map<String,String>> selectAllPredictData() {
-        return dataMapper.selectAllPredictData();
+    public List<Map<String,String>> PredictDataAtStation(String GTFSid) {
+        return dataMapper.PredictDataAtStation(GTFSid);
     }
 
 

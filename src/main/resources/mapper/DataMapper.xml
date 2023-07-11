@@ -8,17 +8,23 @@
         SELECT * FROM TrueData
     </select>
 
-<!--    //根据日期时间查询真实数据-->
-<!--    List<Map<String,String>> selectAtATime(@Param("dateTime") String dateTime);-->
-    <select id="selectAtATime" resultType="Map">
-        SELECT * FROM TrueData
-        WHERE dateTime = #{dateTime}
+<!--    //查询某时间某站点真实数据-->
+<!--    List<Map<String,String>> TrueDataAtTimeStation(@Param("dateTime") String dateTime,@Param("GTFSid") String GTFSid);-->
+    <select id="TrueDataAtTimeStation" resultType="Map">
+        SELECT GTFS_Stop_ID, dateTime, tEntries, tExits
+        FROM TrueData a, Stations b
+        WHERE a.id = b.Station_ID
+        AND dateTime = #{dateTime}
+        AND GTFS_Stop_ID = #{GTFSid}
     </select>
 
-<!--    //查询预测数据-->
-<!--    List<Map<String,String>> selectAllPredictData();-->
-    <select id="selectAllPredictData" resultType="Map">
-        SELECT * FROM PredictData
+<!--    //查询某站点最新预测数据-->
+<!--    List<Map<String,String>> PredictDataAtStation(@Param("GTFSid") String GTFSid);-->
+    <select id="PredictDataAtStation" resultType="Map">
+        SELECT GTFS_Stop_ID, dateTime, pEntries, pExits
+        FROM PredictData a, Stations b
+        WHERE a.id = b.Station_ID
+        AND GTFS_Stop_ID = #{GTFSid}
     </select>
 
 <!--    //查询时间范围-->

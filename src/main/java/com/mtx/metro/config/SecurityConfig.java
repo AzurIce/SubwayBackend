@@ -53,8 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     // 对于登录接口 允许匿名访问
                 .antMatchers("/user/login").anonymous()
                 .antMatchers("/user/register").anonymous()
-                .antMatchers("/user/email").anonymous()
-                .antMatchers("/user/check").anonymous()
+                .antMatchers("/user/email").permitAll()
+                .antMatchers("/user/check").permitAll()
 
 //                .antMatchers("/predict/all").permitAll()
 //                .antMatchers("/true/at").permitAll()

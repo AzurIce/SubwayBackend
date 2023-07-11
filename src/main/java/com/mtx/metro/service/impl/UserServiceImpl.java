@@ -91,6 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //把token响应给前端
         HashMap<String,String> map = new HashMap<>();
         map.put("token",jwt);
+        map.put("permission",loginUser.getUser().getPermission());
         return Result.success(map);
     }
 
@@ -131,7 +132,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional
     public boolean deleteUserById(String uid) {
-        return removeById(uid);
+        if(removeById(uid)) return true;
+        else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
     }
 
     @Override
@@ -181,11 +183,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional
     public boolean updateUserEmail(String id,String email) {
-        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(User::getId,id).set(User::getMail,email);
-        int flag = userMapper.update(null,wrapper);
-        if(flag >= 1) return true;
-        else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+        User one = getUserInfoByID(id);
+        if(!one.getMail().equals(email)){
+            LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+            wrapper.eq(User::getId,id).set(User::getMail,email);
+            int flag = userMapper.update(null,wrapper);
+            if(flag >= 1) return true;
+            else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+        }else throw new ServiceException(CodeConstants.CODE_600000,"邮箱地址相同");
+
     }
 
     @Override

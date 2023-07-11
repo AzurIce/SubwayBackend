@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 响应类
@@ -38,7 +39,6 @@ public class Result implements Serializable {
     public static Result error(String code,String msg){
         return new Result(code,msg,null);
     }
-
 
 }
 

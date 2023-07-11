@@ -9,9 +9,9 @@ public interface DataService extends IService<Map<String,String>> {
 
     List<Map<String,String>> selectAllTrueData();
 
-    List<Map<String,String>> selectAtATime(String dateTime);
+    List<Map<String,String>> TrueDataAtTimeStation(String dateTime,String GTFSid);
 
-    List<Map<String,String>> selectAllPredictData();
+    List<Map<String,String>> PredictDataAtStation(String GTFSid);
 
     Map<String,String> getTimeRange();
 
