@@ -133,8 +133,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional
     public boolean deleteUserById(String uid) {
-        if(removeById(uid)) return true;
-        else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+        User one = getUserInfoByID(uid);
+        if(one.getPermission() == "3"){
+            if(removeById(uid)) return true;
+            else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+        }else throw new ServiceException(CodeConstants.CODE_600000,"管理员不可删除");
     }
 
     @Override
