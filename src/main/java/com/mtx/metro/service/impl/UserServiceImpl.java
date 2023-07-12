@@ -147,6 +147,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional
     public boolean updateUserInfo(UpdateDto ud) {
         String id = ud.getId();
         User user = getUserInfoByID(id);

@@ -27,11 +27,13 @@ public class DataController {
     }
 
     //全部真实数据
-//    @GetMapping("/true/all")
-//    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
-//    public Result selectAllTrueData(){
-//        return Result.success(dataService.selectAllTrueData());
-//    }
+    @GetMapping("/true/all")
+    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
+    public Result TrueDataAtTime(@RequestParam
+                                        @Valid @NotBlank(message = "日期时间不能为空")
+                                                String dateTime){
+        return Result.success(dataService.TrueDataAtTime(dateTime));
+    }
 
     //某时间点的某站点真实数据
     @GetMapping("/true/at")

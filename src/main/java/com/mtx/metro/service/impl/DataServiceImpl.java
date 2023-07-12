@@ -6,6 +6,7 @@ import com.mtx.metro.mapper.DataMapper;
 import com.mtx.metro.service.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -19,13 +20,15 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     private DataMapper dataMapper;
 
     @Override
-    public List<Map<String,String>> selectAllTrueData() {
-        List<Map<String,String>> list = dataMapper.selectAllTrueData();
+    @Transactional
+    public List<Map<String,String>> TrueDataAtTime(String dateTime) {
+        List<Map<String,String>> list = dataMapper.TrueDataAtTime(dateTime);
         if(!list.isEmpty()) return list;
         else throw new ServiceException(CODE_SERVICE_ERROR,"记录不存在");
     }
 
     @Override
+    @Transactional
     public List<Map<String,String>> TrueDataAtTimeStation(String dateTime,String GTFSid) {
         List<Map<String,String>> list = dataMapper.TrueDataAtTimeStation(dateTime,GTFSid);
         if(!list.isEmpty()) return list;
@@ -33,6 +36,7 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     }
 
     @Override
+    @Transactional
     public Map<String,String> getTimeRange() {
         Map<String,String> map = dataMapper.getTimeRange();
         if(!map.isEmpty()) return map;
@@ -40,6 +44,7 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     }
 
     @Override
+    @Transactional
     public Map<String,String> getThresholdInfo(String GTFSid) {
         Map<String,String> map = dataMapper.getThresholdInfo(GTFSid);
         if(!map.isEmpty()) return map;
@@ -47,6 +52,7 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     }
 
     @Override
+    @Transactional
     public List<Map<String, String>> getWarningInfo(String dateTime) {
         List<Map<String,String>> list = dataMapper.getWarningInfo(dateTime);
         if(!list.isEmpty()) return list;
@@ -54,6 +60,7 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     }
 
     @Override
+    @Transactional
     public List<Map<String,String>> PredictDataAtStation(String GTFSid) {
         List<Map<String,String>> list = dataMapper.PredictDataAtStation(GTFSid);
         if(!list.isEmpty()) return list;

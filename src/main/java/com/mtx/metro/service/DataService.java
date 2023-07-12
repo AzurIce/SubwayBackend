@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface DataService extends IService<Map<String,String>> {
 
-    List<Map<String,String>> selectAllTrueData();
+    List<Map<String,String>> TrueDataAtTime(String dateTime);
 
     List<Map<String,String>> TrueDataAtTimeStation(String dateTime,String GTFSid);
 

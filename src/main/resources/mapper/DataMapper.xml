@@ -2,10 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http#{//mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mtx.metro.mapper.DataMapper">
 
-<!--    //查询所有真实数据-->
-<!--    List<Map<String,String>> selectAllTrueData();-->
-    <select id="selectAllTrueData" resultType="Map">
-        SELECT * FROM TrueData
+<!--    //查询所有真实数据
+    List<Map<String,String>> TrueDataAtTime(@Param("dateTime") String dateTime);-->
+    <select id="TrueDataAtTime" resultType="Map">
+        SELECT *
+        FROM TrueData a, id_map b
+        WHERE a.id = b.id
+        AND dateTime = #{dateTime}
     </select>
 
 <!--    //查询某时间某站点真实数据-->

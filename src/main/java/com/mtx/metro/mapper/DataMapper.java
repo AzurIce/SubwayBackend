@@ -15,7 +15,7 @@ import java.util.Map;
 public interface DataMapper extends BaseMapper<Map<String,String>> {
 
     //查询所有真实数据
-    List<Map<String,String>> selectAllTrueData();
+    List<Map<String,String>> TrueDataAtTime(@Param("dateTime") String dateTime);
 
     //根据日期时间查询真实数据
     List<Map<String,String>> TrueDataAtTimeStation(@Param("dateTime") String dateTime,@Param("GTFSid") String GTFSid);
