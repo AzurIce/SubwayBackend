@@ -24,7 +24,7 @@ public class User implements Serializable {
 
 
     @TableId(type = IdType.AUTO)
-    private Integer Id;
+    private String Id;
 
     @TableField
     @NotBlank(message = "用户名不能为空")

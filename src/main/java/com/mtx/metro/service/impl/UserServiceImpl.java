@@ -58,7 +58,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }return one;
     }
 
-    public User getUserInfoByID(Integer uid){
+    public User getUserInfoByID(String uid){
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId,uid);
         User one;
@@ -126,7 +126,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional
-    public User getUserByID(Integer uid) {
+    public User getUserByID(String uid) {
         User one = getUserInfoByID(uid);
         if(one != null){
             return userMapper.selectUserByID(uid);
@@ -135,12 +135,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional
-    public boolean deleteUserById(Integer uid) {
-        if(uid == 1){
+    public boolean deleteUserById(String uid) {
+        User one = getUserInfoByID(uid);
+        if(one.getName().equals("admin")){
             throw new ServiceException(CODE_SERVICE_ERROR,"超级管理员admin不允许删除");
         }
-        User one = getUserInfoByID(uid);
-        if(one.getPermission() == "3"){
+        if(!one.getPermission().equals("3")){
             if(removeById(uid)) return true;
             else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
         } else throw new ServiceException(CODE_SERVICE_ERROR,"管理员不可删除,如需删除请修改权限后再删除");
@@ -148,9 +148,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public boolean updateUserInfo(UpdateDto ud) {
-        Integer id = ud.getId();
+        String id = ud.getId();
         User user = getUserInfoByID(id);
-        if(id == 1){
+        if(user.getName().equals("admin")){
             throw new ServiceException(CODE_SERVICE_ERROR,"超级管理员admin不可更新");
         }
         boolean name = false, per = false, email = false;
@@ -167,7 +167,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional
-    public boolean updateUserName(Integer id,String newname) {
+    public boolean updateUserName(String id,String newname) {
 //        if(oldname.equals(newname))
 //            throw new ServiceException(CODE_SERVICE_ERROR,"新名称与原名称相同");
 
@@ -184,7 +184,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional
-    public boolean updateUserPwd(Integer id,String oldpwd, String newpwd) {
+    public boolean updateUserPwd(String id,String oldpwd, String newpwd) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         User user = getUserInfoByID(id);
@@ -206,7 +206,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional
-    public boolean updateUserPer(Integer id, String newper) {
+    public boolean updateUserPer(String id, String newper) {
 //        if(oldper.equals(newper))
 //            throw new ServiceException(CODE_SERVICE_ERROR,"新权限与原权限相同");
 
@@ -219,7 +219,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional
-    public boolean updateUserEmail(Integer id,String newemail) {
+    public boolean updateUserEmail(String id,String newemail) {
 //        if(oldmail.equals(newemail))
 //            throw new ServiceException(CODE_SERVICE_ERROR,"新邮箱与原邮箱相同");
 
@@ -236,7 +236,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Result logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
-        Integer userid = loginUser.getUser().getId();
+        String userid = loginUser.getUser().getId();
         redisCache.deleteObject("login:" + userid);
         return Result.success("退出成功");
     }

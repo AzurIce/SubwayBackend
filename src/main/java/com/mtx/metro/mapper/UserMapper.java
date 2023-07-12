@@ -18,11 +18,11 @@ import java.util.List;
 public interface UserMapper extends BaseMapper<User> {
 
     //查询权限
-    PerEnum selectPermsByUserId(@Param("uid") Integer uid);
+    PerEnum selectPermsByUserId(@Param("uid") String uid);
 
     //查询全部用户
     List<User> selectAllUserInfo();
 
     //按照用户id查询用户
-    User selectUserByID(@Param("uid") Integer uid);
+    User selectUserByID(@Param("uid") String uid);
 }

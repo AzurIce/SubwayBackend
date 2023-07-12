@@ -17,19 +17,19 @@ public interface UserService extends IService<User> {
 
     List<User> getAllUserInfo();
 
-    User getUserByID(Integer uid);
+    User getUserByID(String uid);
 
-    boolean deleteUserById(Integer uid);
+    boolean deleteUserById(String uid);
 
     boolean updateUserInfo(UpdateDto ud);
 
-    boolean updateUserName(Integer id,String name);
+    boolean updateUserName(String id,String name);
 
-    boolean updateUserPwd(Integer id,String oldpwd, String newpwd);
+    boolean updateUserPwd(String id,String oldpwd, String newpwd);
 
-    boolean updateUserPer(Integer id,String per);
+    boolean updateUserPer(String id,String per);
 
-    boolean updateUserEmail(Integer id,String email);
+    boolean updateUserEmail(String id,String email);
 
     Result logout();
 }

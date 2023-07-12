@@ -69,20 +69,19 @@ public class UserController {
     @GetMapping("/info")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Result getStuByID(@RequestParam
-                                         Integer uid){
+                                         String uid){
         return Result.success(userService.getUserByID(uid));
     }
 
     //删除用户信息!!
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public Result deleteUserById(@RequestParam
-                                             Integer uid){
+    public Result deleteUserById(@RequestParam String uid){
         return Result.success(userService.deleteUserById(uid));
     }
 
     //更新用户数据
-    @GetMapping("/update")
+    @PostMapping("/update")
     @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
     public Result updateUserInfo(@RequestBody
                                  @Valid UpdateDto ud){
@@ -90,10 +89,10 @@ public class UserController {
     }
 
     //更改用户密码!!
-    @GetMapping("/update/password") //改变数据库数据就用post
+    @PostMapping("/update/password") //改变数据库数据就用post
     @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
     public Result updateUserPwd(@RequestParam
-                                            Integer id,
+                                            String id,
                                 @RequestParam
                                 @Valid @NotBlank(message = "原密码不能为空")
                                         String oldpwd,
