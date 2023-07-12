@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtx.metro.constants.CodeConstants;
 import com.mtx.metro.controller.dto.RegisterDto;
+import com.mtx.metro.controller.dto.UpdateDto;
 import com.mtx.metro.service.UserEmailService;
 import com.mtx.metro.utils.Result;
 import com.mtx.metro.exception.ServiceException;
@@ -17,9 +18,6 @@ import com.mtx.metro.mapper.UserMapper;
 import com.mtx.metro.service.UserService;
 import com.mtx.metro.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+
+import static com.mtx.metro.constants.CodeConstants.CODE_SERVICE_ERROR;
+import static com.mtx.metro.constants.CodeConstants.CODE_SYSTEM_ERROR;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -53,11 +54,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             one = getOne(wrapper);
         }catch (Exception e){
             log.error(e.toString());
-            throw new ServiceException(CodeConstants.CODE_500000,"系统错误");
+            throw new ServiceException(CODE_SYSTEM_ERROR,"系统错误");
         }return one;
     }
 
-    public User getUserInfoByID(String uid){
+    public User getUserInfoByID(Integer uid){
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId,uid);
         User one;
@@ -65,7 +66,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             one = getOne(wrapper);
         }catch (Exception e){
             log.error(e.toString());
-            throw new ServiceException(CodeConstants.CODE_500000,"系统错误");
+            throw new ServiceException(CODE_SYSTEM_ERROR,"系统错误");
         }return one;
     }
 
@@ -79,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 
         if(Objects.isNull(authenticate)){
-            throw new ServiceException(CodeConstants.CODE_600000,"用户名或密码错误");
+            throw new ServiceException(CODE_SERVICE_ERROR,"用户名或密码错误");
         }
         //使用userid生成token
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
@@ -110,7 +111,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 user.setMail(rdto.getEmail());
                 save(user);
             }
-        }else throw new ServiceException(CodeConstants.CODE_600000,"用户名已存在");
+        }else throw new ServiceException(CODE_SERVICE_ERROR,"用户名已存在");
 
         return Result.success(getUserInfoByName(rdto.getUname()));
     }
@@ -118,83 +119,115 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional
     public List<User> getAllUserInfo() {
-        return userMapper.selectAllUserInfo();
+        List<User> list = userMapper.selectAllUserInfo();
+        if(!list.isEmpty()) return list;
+        else throw new ServiceException(CODE_SERVICE_ERROR,"记录不存在");
     }
 
     @Override
     @Transactional
-    public User getUserByID(String uid) {
+    public User getUserByID(Integer uid) {
         User one = getUserInfoByID(uid);
         if(one != null){
             return userMapper.selectUserByID(uid);
-        }else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+        }else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
     }
 
     @Override
     @Transactional
-    public boolean deleteUserById(String uid) {
+    public boolean deleteUserById(Integer uid) {
+        if(uid == 1){
+            throw new ServiceException(CODE_SERVICE_ERROR,"超级管理员admin不允许删除");
+        }
         User one = getUserInfoByID(uid);
         if(one.getPermission() == "3"){
             if(removeById(uid)) return true;
-            else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
-        }else throw new ServiceException(CodeConstants.CODE_600000,"管理员不可删除");
+            else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
+        } else throw new ServiceException(CODE_SERVICE_ERROR,"管理员不可删除,如需删除请修改权限后再删除");
+    }
+
+    @Override
+    public boolean updateUserInfo(UpdateDto ud) {
+        Integer id = ud.getId();
+        User user = getUserInfoByID(id);
+        if(id == 1){
+            throw new ServiceException(CODE_SERVICE_ERROR,"超级管理员admin不可更新");
+        }
+        boolean name = false, per = false, email = false;
+
+        if(!user.getName().equals(ud.getName()))
+            name = updateUserName(id,ud.getName());
+        if(!user.getPermission().equals(ud.getPer()))
+            per = updateUserPer(id, ud.getPer());
+        if(!user.getMail().equals(ud.getEmail()))
+            email = updateUserEmail(id,ud.getEmail());
+        if(name || per || email) return true;
+        else throw new ServiceException(CODE_SERVICE_ERROR,"用户信息没有改变");
     }
 
     @Override
     @Transactional
-    public boolean updateUserName(String id,String name) {
-        User one = getUserInfoByName(name);
-        if(one == null){
-            LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
-            wrapper.eq(User::getId,id).set(User::getName,name);
-            int flag = userMapper.update(null,wrapper);
-            if(flag >= 1) return true;
-            else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
-        }else throw new ServiceException(CodeConstants.CODE_600000,"用户名已存在");
-    }
+    public boolean updateUserName(Integer id,String newname) {
+//        if(oldname.equals(newname))
+//            throw new ServiceException(CODE_SERVICE_ERROR,"新名称与原名称相同");
 
-    @Override
-    @Transactional
-    public boolean updateUserPwd(String id,String pwd) {
-        User one = getUserInfoByID(id);
-        if(one != null){
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        User one = getUserInfoByName(newname);
+        if(one != null)
+            throw new ServiceException(CODE_SERVICE_ERROR,"该用户名已存在");
 
-            if(!passwordEncoder.matches(pwd,one.getPassword())){
-                String token = passwordEncoder.encode(pwd);
-
-                LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
-                wrapper.eq(User::getId,id).set(User::getPassword,token);
-
-                int flag = userMapper.update(null,wrapper);
-                if(flag >= 1) return true;
-                else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
-            }else throw new ServiceException(CodeConstants.CODE_600000,"密码相同");
-        }else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
-
-    }
-
-    @Override
-    @Transactional
-    public boolean updateUserPer(String id,String per) {
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(User::getId,id).set(User::getPermission,per);
+        wrapper.eq(User::getId,id).set(User::getName,newname);
         int flag = userMapper.update(null,wrapper);
         if(flag >= 1) return true;
-        else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
+        else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
     }
 
     @Override
     @Transactional
-    public boolean updateUserEmail(String id,String email) {
-        User one = getUserInfoByID(id);
-        if(!one.getMail().equals(email)){
-            LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
-            wrapper.eq(User::getId,id).set(User::getMail,email);
-            int flag = userMapper.update(null,wrapper);
-            if(flag >= 1) return true;
-            else throw new ServiceException(CodeConstants.CODE_600000,"用户不存在");
-        }else throw new ServiceException(CodeConstants.CODE_600000,"邮箱地址相同");
+    public boolean updateUserPwd(Integer id,String oldpwd, String newpwd) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        User user = getUserInfoByID(id);
+        if(!passwordEncoder.matches(oldpwd,user.getPassword()))
+            throw new ServiceException(CODE_SERVICE_ERROR,"原密码输入错误");
+        if(newpwd.equals(oldpwd))
+            throw new ServiceException(CODE_SERVICE_ERROR,"新密码与原密码相同");
+
+        String token = passwordEncoder.encode(newpwd);
+
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(User::getId,id).set(User::getPassword,token);
+
+        int flag = userMapper.update(null,wrapper);
+        if(flag >= 1) return true;
+        else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
+
+    }
+
+    @Override
+    @Transactional
+    public boolean updateUserPer(Integer id, String newper) {
+//        if(oldper.equals(newper))
+//            throw new ServiceException(CODE_SERVICE_ERROR,"新权限与原权限相同");
+
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(User::getId,id).set(User::getPermission,newper);
+        int flag = userMapper.update(null,wrapper);
+        if(flag >= 1) return true;
+        else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
+    }
+
+    @Override
+    @Transactional
+    public boolean updateUserEmail(Integer id,String newemail) {
+//        if(oldmail.equals(newemail))
+//            throw new ServiceException(CODE_SERVICE_ERROR,"新邮箱与原邮箱相同");
+
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(User::getId,id).set(User::getMail,newemail);
+        int flag = userMapper.update(null,wrapper);
+        if(flag >= 1) return true;
+        else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
 
     }
 
@@ -203,7 +236,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Result logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
-        Long userid = loginUser.getUser().getId();
+        Integer userid = loginUser.getUser().getId();
         redisCache.deleteObject("login:" + userid);
         return Result.success("退出成功");
     }

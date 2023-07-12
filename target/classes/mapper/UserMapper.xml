@@ -3,7 +3,7 @@
 <mapper namespace="com.mtx.metro.mapper.UserMapper">
 
 <!--    //查询权限-->
-<!--    List<String> selectPermsByUserId(@Param("uid") Long uid);-->
+<!--    List<String> selectPermsByUserId(@Param("uid") Integer uid);-->
     <select id="selectPermsByUserId" resultType="com.mtx.metro.enums.PerEnum">
         SELECT Permission FROM User
         WHERE Id = #{uid}
@@ -16,7 +16,7 @@
     </select>
 
 <!--    //按照用户id查询用户-->
-<!--    Page<User> selectUserByID(@Param("uid") String uid);-->
+<!--    Page<User> selectUserByID(@Param("uid") Integer uid);-->
     <select id="selectUserByID" resultType="User">
         SELECT * FROM User
         WHERE Id = #{uid}

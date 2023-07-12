@@ -11,20 +11,20 @@
 <!--    //查询某时间某站点真实数据-->
 <!--    List<Map<String,String>> TrueDataAtTimeStation(@Param("dateTime") String dateTime,@Param("GTFSid") String GTFSid);-->
     <select id="TrueDataAtTimeStation" resultType="Map">
-        SELECT gtfs_id, dateTime, tEntries, tExits
+        SELECT GTFS_Stop_ID, dateTime, tEntries, tExits
         FROM TrueData a, id_map b
         WHERE a.id = b.id
         AND dateTime = #{dateTime}
-        AND gtfs_id = #{GTFSid}
+        AND GTFS_Stop_ID = #{GTFSid}
     </select>
 
 <!--    //查询某站点最新预测数据-->
 <!--    List<Map<String,String>> PredictDataAtStation(@Param("GTFSid") String GTFSid);-->
     <select id="PredictDataAtStation" resultType="Map">
-        SELECT gtfs_id, dateTime, pEntries, pExits
+        SELECT GTFS_Stop_ID, dateTime, pEntries, pExits
         FROM PredictData a, id_map b
         WHERE a.id = b.id
-        AND gtfs_id = #{GTFSid}
+        AND GTFS_Stop_ID = #{GTFSid}
     </select>
 
 <!--    //查询时间范围-->
@@ -39,13 +39,13 @@
         SELECT avg_entries,max_entries,avg_exits,max_exits
         FROM Threshold a, id_map b
         WHERE a.id = b.id
-        AND gtfs_id = #{GTFSid}
+        AND GTFS_Stop_ID = #{GTFSid}
     </select>
 
 <!--    //查询某日期时间的流量预警信息-->
 <!--    List<Map<String,String>> getWarningInfo(@Param("dateTime") String dateTime);-->
     <select id="getWarningInfo" resultType="Map">
-        SELECT gtfs_id, dateTime, Exits, Entries
+        SELECT GTFS_Stop_ID, dateTime, Exits, Entries
         FROM TooManyWarning a, id_map b
         WHERE a.id = b.id
         AND dateTime = #{dateTime}

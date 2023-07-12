@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+import static com.mtx.metro.constants.CodeConstants.CODE_SERVICE_ERROR;
+
 @Service
 public class UserDetailsServiceImpl extends ServiceImpl<UserMapper, User> implements UserDetailsService {
     @Autowired
@@ -29,7 +31,7 @@ public class UserDetailsServiceImpl extends ServiceImpl<UserMapper, User> implem
         User user = userMapper.selectOne(wrapper);
         //如果查询不到数据就通过抛出异常来给出提示
         if(Objects.isNull(user)){
-            throw new ServiceException(CodeConstants.CODE_600000,"用户名或密码错误");
+            throw new ServiceException(CODE_SERVICE_ERROR,"用户名或密码错误");
         }
 
         //TODO 根据用户查询权限信息 添加到LoginUser中

@@ -6,7 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.mtx.metro.constants.CodeConstants.CODE_SERVICE_ERROR;
+import static com.mtx.metro.constants.CodeConstants.CODE_SUCCESS;
 
 /**
  * 响应类
@@ -22,17 +28,12 @@ public class Result implements Serializable {
 
     //返回一个成功信息
     public static Result success(){
-        return new Result(CodeConstants.CODE_200000,"操作成功",null);
+        return new Result(CODE_SUCCESS,"操作成功",null);
     }
 
     //返回一个成功信息
     public static Result success(Object data){
-        return new Result(CodeConstants.CODE_200000,"操作成功",data);
-    }
-
-    //系统错误
-    public static Result error(){
-        return new Result(CodeConstants.CODE_500000,"系统错误",null);
+        return new Result(CODE_SUCCESS,"操作成功",data);
     }
 
     //返回一个失败信息

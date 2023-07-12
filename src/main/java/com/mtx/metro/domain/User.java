@@ -22,8 +22,9 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = -40356785423868312L;
 
+
     @TableId(type = IdType.AUTO)
-    private Long Id;
+    private Integer Id;
 
     @TableField
     @NotBlank(message = "用户名不能为空")

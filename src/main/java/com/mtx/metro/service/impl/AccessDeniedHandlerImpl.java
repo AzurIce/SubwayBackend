@@ -12,13 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.mtx.metro.constants.CodeConstants.CODE_300000;
+import static com.mtx.metro.constants.CodeConstants.CODE_PERMISSION_ERROR;
 
 @Component
 public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        String json = JSON.toJSONString(Result.error(CODE_300000, "权限不足"));
+        String json = JSON.toJSONString(Result.error(CODE_PERMISSION_ERROR, "权限不足"));
         WebUtils.renderString(response,json);
     }
 }

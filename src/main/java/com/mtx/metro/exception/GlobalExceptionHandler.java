@@ -1,23 +1,16 @@
 package com.mtx.metro.exception;
 
-import com.mtx.metro.constants.CodeConstants;
 import com.mtx.metro.utils.Result;
 
-import org.mybatis.logging.Logger;
-import org.mybatis.logging.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.ConstraintViolationException;
 import java.net.BindException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.lang.String;
+
+import static com.mtx.metro.constants.CodeConstants.CODE_PARAMETER_ERROR;
+import static com.mtx.metro.constants.CodeConstants.CODE_SYSTEM_ERROR;
 
 //全局异常处理器
 @ControllerAdvice
@@ -44,7 +37,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseBody
     public Result handle(ConstraintViolationException e){
-        return Result.error(CodeConstants.CODE_400000,e.getMessage());
+        return Result.error(CODE_PARAMETER_ERROR,e.getMessage());
     }
 
     /**
@@ -56,7 +49,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public Result handle(MethodArgumentNotValidException e){
-        return Result.error(CodeConstants.CODE_400000,e.getBindingResult().getFieldError().getDefaultMessage());
+        return Result.error(CODE_PARAMETER_ERROR,e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
     /**
@@ -68,6 +61,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({BindException.class})
     @ResponseBody
     public Result handleBindException(BindException e) {
-        return Result.error(CodeConstants.CODE_400000, e.getMessage());
+        return Result.error(CODE_PARAMETER_ERROR, e.getMessage());
+    }
+
+    /**
+     * Redis未连接报错
+     * @param e
+     * @return
+     */
+    @ExceptionHandler({RedisConnectionFailureException.class})
+    @ResponseBody
+    public Result handleConnectionException(RedisConnectionFailureException e){
+        return Result.error(CODE_SYSTEM_ERROR,e.getMessage());
     }
 }
