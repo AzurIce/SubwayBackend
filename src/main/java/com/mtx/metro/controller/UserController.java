@@ -67,37 +67,34 @@ public class UserController {
     //根据id查询用户信息!!
     @GetMapping("/info")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Result> getStuByID(@RequestParam
-                                         String uid){
+    public ResponseEntity<Result> getStuByID(@RequestParam @Valid String uid){
         return new ResponseEntity<>(Result.success(userService.getUserByID(uid)), HttpStatus.OK);
     }
 
     //删除用户信息!!
     @PostMapping("/delete")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Result> deleteUserById(@RequestParam String uid){
+    public ResponseEntity<Result> deleteUserById(@RequestParam @Valid String uid){
         return new ResponseEntity<>(Result.success(userService.deleteUserById(uid)), HttpStatus.OK);
     }
 
     //更新用户数据
     @PostMapping("/update")
     @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
-    public ResponseEntity<Result> updateUserInfo(@RequestBody
-                                 @Valid UpdateDto ud){
+    public ResponseEntity<Result> updateUserInfo(@RequestBody @Valid UpdateDto ud){
         return new ResponseEntity<>(Result.success(userService.updateUserInfo(ud)), HttpStatus.OK);
     }
 
     //更改用户密码!!
     @PostMapping("/update/password") //改变数据库数据就用post
     @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
-    public ResponseEntity<Result> updateUserPwd(@RequestParam
-                                            String id,
+    public ResponseEntity<Result> updateUserPwd(@RequestParam String id,
                                 @RequestParam
                                 @Valid @NotBlank(message = "原密码不能为空")
                                         String oldpwd,
                                 @RequestParam
-                                    @Valid @NotBlank(message = "新密码不能为空")
-                                            String newpwd){
+                                @Valid @NotBlank(message = "新密码不能为空")
+                                        String newpwd){
         return new ResponseEntity<>(Result.success(userService.updateUserPwd(id,oldpwd,newpwd)), HttpStatus.OK);
     }
 }

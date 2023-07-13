@@ -54,14 +54,14 @@ public class DataController {
     }
 
     //某站点的最新预测数据
-    @GetMapping("/predict/at")
-    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
-    public ResponseEntity<Result> PredictDataAtStation(@RequestParam
-                                           @Valid @NotBlank(message = "站名不能为空")
-                                                   String GTFSid){
-
-        return new ResponseEntity<>(Result.success(dataService.PredictDataAtStation(GTFSid)), HttpStatus.OK);
-    }
+//    @GetMapping("/predict/at")
+//    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
+//    public ResponseEntity<Result> PredictDataAtStation(@RequestParam
+//                                           @Valid @NotBlank(message = "站名不能为空")
+//                                                   String GTFSid){
+//
+//        return new ResponseEntity<>(Result.success(dataService.PredictDataAtStation(GTFSid)), HttpStatus.OK);
+//    }
 
     //某GTFSid的站点信息
     @GetMapping("/threshold")
@@ -82,11 +82,11 @@ public class DataController {
     }
 
     //查询某时间所有过载站点
-    @GetMapping("/overload")
-    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
-    public ResponseEntity<Result> getOverloadInfo(@RequestParam
-                                                 @Valid @NotBlank(message = "日期时间不能为空")
-                                                         String dateTime){
-        return new ResponseEntity<>(Result.success(dataService.getOverloadInfo(dateTime)), HttpStatus.OK);
-    }
+//    @GetMapping("/overload")
+//    @PreAuthorize("hasAnyAuthority('ROLE_NORMAL','ROLE_COMPANY','ROLE_ADMIN')")
+//    public ResponseEntity<Result> getOverloadInfo(@RequestParam
+//                                                 @Valid @NotBlank(message = "日期时间不能为空")
+//                                                         String dateTime){
+//        return new ResponseEntity<>(Result.success(dataService.getOverloadInfo(dateTime)), HttpStatus.OK);
+//    }
 }

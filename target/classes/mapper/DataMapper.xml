@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http#{//mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mtx.metro.mapper.DataMapper">
+
+<!--    //查询所有站点名称-->
+<!--    List<Map<String,String>> getAllStationName();-->
+    <select id="getAllStationName" resultType="Map">
+        SELECT * FROM id_map
+    </select>
+
+<!--    //查询所有真实数据
+    List<Map<String,String>> TrueDataAtTime(@Param("dateTime") String dateTime);-->
+    <select id="TrueDataAtTime" resultType="Map">
+        SELECT *
+        FROM TrueData a, id_map b
+        WHERE a.id = b.id
+        AND dateTime = #{dateTime}
+    </select>
+
+<!--    //查询某时间某站点真实数据-->
+<!--    List<Map<String,String>> TrueDataAtTimeStation(@Param("dateTime") String dateTime,@Param("GTFSid") String GTFSid);-->
+    <select id="TrueDataAtTimeStation" resultType="Map">
+        SELECT GTFS_Stop_ID, dateTime, tEntries, tExits
+        FROM TrueData a, id_map b
+        WHERE a.id = b.id
+        AND dateTime = #{dateTime}
+        AND GTFS_Stop_ID = #{GTFSid}
+    </select>
+
+<!--    //查询某站点最新预测数据-->
+<!--    List<Map<String,String>> PredictDataAtStation(@Param("GTFSid") String GTFSid);-->
+    <select id="PredictDataAtStation" resultType="Map">
+        SELECT GTFS_Stop_ID, dateTime, pEntries, pExits
+        FROM PredictData a, id_map b
+        WHERE a.id = b.id
+        AND GTFS_Stop_ID = #{GTFSid}
+    </select>
+
+<!--    //查询时间范围-->
+<!--    Map<String,String> getTimeRange();-->
+    <select id="getTimeRange" resultType="Map">
+        SELECT * FROM timeRange
+    </select>
+
+<!--    //查询某站点avg、max客流数据-->
+<!--    Map<String,String> getThresholdInfo(@Param("GTFSid") String GTFSid);-->
+    <select id="getThresholdInfo" resultType="Map">
+        SELECT avg_entries,max_entries,avg_exits,max_exits
+        FROM Threshold a, id_map b
+        WHERE a.id = b.id
+        AND GTFS_Stop_ID = #{GTFSid}
+    </select>
+
+<!--    //查询某日期时间的流量预警信息-->
+<!--    List<Map<String,String>> getWarningInfo(@Param("dateTime") String dateTime);-->
+    <select id="getWarningInfo" resultType="Map">
+        SELECT GTFS_Stop_ID, dateTime, Exits, Entries
+        FROM TooManyWarning a, id_map b
+        WHERE a.id = b.id
+        AND dateTime = #{dateTime}
+    </select>
+
+<!--    //查询某时间所有过载站点信息-->
+<!--    List<Map<String,String>> getOverloadInfo(@Param("dateTime") String dateTime);-->
+    <select id="getOverloadInfo" resultType="Map">
+        SELECT a.id AS id, dateTime, tEntries, tExits
+        FROM TrueData a, Threshold b
+        WHERE a.id = b.id
+        AND dateTime = #{dateTime}
+        AND tEntries > avg_entries * 2 OR tExits > avg_exits * 2
+    </select>
+
+</mapper>

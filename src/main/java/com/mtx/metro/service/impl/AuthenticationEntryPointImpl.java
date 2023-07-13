@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.mtx.metro.constants.CodeConstants.CODE_PERMISSION_ERROR;
-
 @Component
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     @Override
