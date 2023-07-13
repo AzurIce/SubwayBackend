@@ -137,6 +137,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Transactional
     public boolean deleteUserById(String uid) {
         User one = getUserInfoByID(uid);
+        if(one == null) throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
         if(one.getName().equals("admin")){
             throw new ServiceException(CODE_SERVICE_ERROR,"超级管理员admin不允许删除");
         }

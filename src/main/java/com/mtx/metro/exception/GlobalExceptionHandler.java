@@ -3,6 +3,7 @@ package com.mtx.metro.exception;
 import com.mtx.metro.utils.Result;
 
 import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
