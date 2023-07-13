@@ -2,7 +2,6 @@ package com.mtx.metro.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mtx.metro.constants.CodeConstants;
 import com.mtx.metro.utils.LoginUser;
 import com.mtx.metro.exception.ServiceException;
 import com.mtx.metro.mapper.UserMapper;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-
-import static com.mtx.metro.constants.CodeConstants.CODE_SERVICE_ERROR;
 
 @Service
 public class UserDetailsServiceImpl extends ServiceImpl<UserMapper, User> implements UserDetailsService {

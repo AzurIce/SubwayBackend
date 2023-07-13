@@ -29,12 +29,12 @@
 
 <!--    //查询某站点最新预测数据-->
 <!--    List<Map<String,String>> PredictDataAtStation(@Param("GTFSid") String GTFSid);-->
-    <select id="PredictDataAtStation" resultType="Map">
-        SELECT GTFS_Stop_ID, dateTime, pEntries, pExits
-        FROM PredictData a, id_map b
-        WHERE a.id = b.id
-        AND GTFS_Stop_ID = #{GTFSid}
-    </select>
+<!--    <select id="PredictDataAtStation" resultType="Map">-->
+<!--        SELECT GTFS_Stop_ID, dateTime, pEntries, pExits-->
+<!--        FROM PredictData a, id_map b-->
+<!--        WHERE a.id = b.id-->
+<!--        AND GTFS_Stop_ID = #{GTFSid}-->
+<!--    </select>-->
 
 <!--    //查询时间范围-->
 <!--    Map<String,String> getTimeRange();-->
@@ -62,12 +62,12 @@
 
 <!--    //查询某时间所有过载站点信息-->
 <!--    List<Map<String,String>> getOverloadInfo(@Param("dateTime") String dateTime);-->
-    <select id="getOverloadInfo" resultType="Map">
-        SELECT a.id AS id, dateTime, tEntries, tExits
-        FROM TrueData a, Threshold b
-        WHERE a.id = b.id
-        AND dateTime = #{dateTime}
-        AND tEntries > avg_entries * 2 OR tExits > avg_exits * 2
-    </select>
+<!--    <select id="getOverloadInfo" resultType="Map">-->
+<!--        SELECT a.id AS id, dateTime, tEntries, tExits-->
+<!--        FROM TrueData a, Threshold b-->
+<!--        WHERE a.id = b.id-->
+<!--        AND dateTime = #{dateTime}-->
+<!--        AND tEntries > avg_entries * 2 OR tExits > avg_exits * 2-->
+<!--    </select>-->
 
 </mapper>

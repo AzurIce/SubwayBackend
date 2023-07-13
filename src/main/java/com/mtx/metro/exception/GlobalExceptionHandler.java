@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.ConstraintViolationException;
 import java.net.BindException;
 
-import static com.mtx.metro.constants.CodeConstants.*;
-
 //全局异常处理器
 @ControllerAdvice
 @RestControllerAdvice

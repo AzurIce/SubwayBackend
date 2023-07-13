@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 
-import static com.mtx.metro.constants.CodeConstants.CODE_SUCCESS;
-
 /**
  * 响应类
  */

@@ -74,9 +74,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 
-        if(Objects.isNull(authenticate)){
+        if(Objects.isNull(authenticate))
             throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "用户名或密码错误");
-        }
+
         //使用userid生成token
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
         String userId = loginUser.getUser().getId().toString();
@@ -96,18 +96,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Transactional
     public User register(RegisterDto rdto) {
         User one = getUserInfoByName(rdto.getUname());
+        if(one != null)
+            throw new ServiceException(HttpStatus.FORBIDDEN.value(), "用户名已存在");
 
-        if(one == null){
-            if(userEmailService.checkEmailCode(rdto.getEmail(),rdto.getToken(),rdto.getCode())){
-                BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-                User user = new User();
-                user.setName(rdto.getUname());
-                user.setPassword(passwordEncoder.encode(rdto.getPwd()));
-                user.setMail(rdto.getEmail());
-                save(user);
-            }
-        }else throw new ServiceException(HttpStatus.FORBIDDEN.value(), "用户名已存在");
-
+        if(userEmailService.checkEmailCode(rdto.getEmail(),rdto.getToken(),rdto.getCode())){
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            User user = new User();
+            user.setName(rdto.getUname());
+            user.setPassword(passwordEncoder.encode(rdto.getPwd()));
+            user.setMail(rdto.getEmail());
+            save(user);
+        }
         return getUserInfoByName(rdto.getUname());
     }
 
@@ -115,17 +114,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Transactional
     public List<User> getAllUserInfo() {
         List<User> list = userMapper.selectAllUserInfo();
-        if(!list.isEmpty()) return list;
-        else throw new ServiceException(HttpStatus.NOT_FOUND.value(), "记录不存在");
+        if(list.isEmpty())
+            throw new ServiceException(HttpStatus.NOT_FOUND.value(), "记录不存在");
+
+        return list;
     }
 
     @Override
     @Transactional
     public User getUserByID(String uid) {
         User one = getUserInfoByID(uid);
-        if(one != null){
-            return userMapper.selectUserByID(uid);
-        }else throw new ServiceException(HttpStatus.NOT_FOUND.value(),"用户不存在");
+        if(one == null)
+            throw new ServiceException(HttpStatus.NOT_FOUND.value(),"用户不存在");
+
+        return userMapper.selectUserByID(uid);
     }
 
     @Override
@@ -133,13 +135,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean deleteUserById(String uid) {
         User one = getUserInfoByID(uid);
         if(one == null) throw new ServiceException(HttpStatus.NOT_FOUND.value(),"用户不存在");
-        if(one.getName().equals("admin")){
+
+        if(one.getName().equals("admin"))
             throw new ServiceException(HttpStatus.FORBIDDEN.value(),"超级管理员admin不允许删除");
-        }
-        if(!one.getPermission().equals("3")){
-            if(removeById(uid)) return true;
-            else throw new ServiceException(HttpStatus.NOT_FOUND.value(),"用户不存在");
-        } else throw new ServiceException(HttpStatus.FORBIDDEN.value(), "管理员不可删除,如需删除请修改权限后再删除");
+
+        if(one.getPermission().equals("3"))
+            throw new ServiceException(HttpStatus.FORBIDDEN.value(), "管理员不可删除,如需删除请修改权限后再删除");
+
+        if(removeById(uid)) return true;
+        else throw new ServiceException(HttpStatus.NOT_FOUND.value(),"用户不存在");
     }
 
     @Override
@@ -147,9 +151,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean updateUserInfo(UpdateDto ud) {
         String id = ud.getId();
         User user = getUserInfoByID(id);
-        if(user.getName().equals("admin")){
+        if(user.getName().equals("admin"))
             throw new ServiceException(HttpStatus.FORBIDDEN.value(),"超级管理员admin不可更新");
-        }
+
         boolean name = false, per = false, email = false;
 
         if(!user.getName().equals(ud.getName()))
@@ -165,7 +169,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional
     public boolean updateUserName(String id,String newname) {
-
         User one = getUserInfoByName(newname);
         if(one != null)
             throw new ServiceException(HttpStatus.BAD_REQUEST.value(),"该用户名已存在");
@@ -196,13 +199,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         int flag = userMapper.update(null,wrapper);
         if(flag >= 1) return true;
         else throw new ServiceException(HttpStatus.NOT_FOUND.value(), "用户不存在");
-
     }
 
     @Override
     @Transactional
     public boolean updateUserPer(String id, String newper) {
-
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId,id).set(User::getPermission,newper);
         int flag = userMapper.update(null,wrapper);
@@ -213,13 +214,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional
     public boolean updateUserEmail(String id,String newemail) {
-
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId,id).set(User::getMail,newemail);
         int flag = userMapper.update(null,wrapper);
         if(flag >= 1) return true;
         else throw new ServiceException(HttpStatus.NOT_FOUND.value(), "用户不存在");
-
     }
 
     @Override
