@@ -49,7 +49,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             one = getOne(wrapper);
         }catch (Exception e){
             log.error(e.toString());
-            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "系统错误");
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "系统错误");
         }return one;
     }
 
@@ -61,7 +61,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             one = getOne(wrapper);
         }catch (Exception e){
             log.error(e.toString());
-            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR.toString(),"系统错误");
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR.value(),"系统错误");
         }return one;
     }
 
@@ -75,7 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 
         if(Objects.isNull(authenticate)){
-            throw new ServiceException(HttpStatus.BAD_REQUEST.toString(), "用户名或密码错误");
+            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "用户名或密码错误");
         }
         //使用userid生成token
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
@@ -106,7 +106,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 user.setMail(rdto.getEmail());
                 save(user);
             }
-        }else throw new ServiceException(HttpStatus.FORBIDDEN.toString(), "用户名已存在");
+        }else throw new ServiceException(HttpStatus.FORBIDDEN.value(), "用户名已存在");
 
         return getUserInfoByName(rdto.getUname());
     }
@@ -116,7 +116,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public List<User> getAllUserInfo() {
         List<User> list = userMapper.selectAllUserInfo();
         if(!list.isEmpty()) return list;
-        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(), "记录不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.value(), "记录不存在");
     }
 
     @Override
@@ -125,21 +125,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User one = getUserInfoByID(uid);
         if(one != null){
             return userMapper.selectUserByID(uid);
-        }else throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"用户不存在");
+        }else throw new ServiceException(HttpStatus.NOT_FOUND.value(),"用户不存在");
     }
 
     @Override
     @Transactional
     public boolean deleteUserById(String uid) {
         User one = getUserInfoByID(uid);
-        if(one == null) throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"用户不存在");
+        if(one == null) throw new ServiceException(HttpStatus.NOT_FOUND.value(),"用户不存在");
         if(one.getName().equals("admin")){
-            throw new ServiceException(HttpStatus.FORBIDDEN.toString(),"超级管理员admin不允许删除");
+            throw new ServiceException(HttpStatus.FORBIDDEN.value(),"超级管理员admin不允许删除");
         }
         if(!one.getPermission().equals("3")){
             if(removeById(uid)) return true;
-            else throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"用户不存在");
-        } else throw new ServiceException(HttpStatus.FORBIDDEN.toString(), "管理员不可删除,如需删除请修改权限后再删除");
+            else throw new ServiceException(HttpStatus.NOT_FOUND.value(),"用户不存在");
+        } else throw new ServiceException(HttpStatus.FORBIDDEN.value(), "管理员不可删除,如需删除请修改权限后再删除");
     }
 
     @Override
@@ -148,7 +148,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String id = ud.getId();
         User user = getUserInfoByID(id);
         if(user.getName().equals("admin")){
-            throw new ServiceException(HttpStatus.FORBIDDEN.toString(),"超级管理员admin不可更新");
+            throw new ServiceException(HttpStatus.FORBIDDEN.value(),"超级管理员admin不可更新");
         }
         boolean name = false, per = false, email = false;
 
@@ -159,7 +159,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(!user.getMail().equals(ud.getEmail()))
             email = updateUserEmail(id,ud.getEmail());
         if(name || per || email) return true;
-        else throw new ServiceException(HttpStatus.FORBIDDEN.toString(),"用户信息没有改变");
+        else throw new ServiceException(HttpStatus.FORBIDDEN.value(),"用户信息没有改变");
     }
 
     @Override
@@ -168,13 +168,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         User one = getUserInfoByName(newname);
         if(one != null)
-            throw new ServiceException(HttpStatus.BAD_REQUEST.toString(),"该用户名已存在");
+            throw new ServiceException(HttpStatus.BAD_REQUEST.value(),"该用户名已存在");
 
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId,id).set(User::getName,newname);
         int flag = userMapper.update(null,wrapper);
         if(flag >= 1) return true;
-        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(), "用户不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.value(), "用户不存在");
     }
 
     @Override
@@ -184,9 +184,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         User user = getUserInfoByID(id);
         if(!passwordEncoder.matches(oldpwd,user.getPassword()))
-            throw new ServiceException(HttpStatus.FORBIDDEN.toString(),"原密码输入错误");
+            throw new ServiceException(HttpStatus.FORBIDDEN.value(),"原密码输入错误");
         if(newpwd.equals(oldpwd))
-            throw new ServiceException(HttpStatus.FORBIDDEN.toString(),"新密码与原密码相同");
+            throw new ServiceException(HttpStatus.FORBIDDEN.value(),"新密码与原密码相同");
 
         String token = passwordEncoder.encode(newpwd);
 
@@ -195,7 +195,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         int flag = userMapper.update(null,wrapper);
         if(flag >= 1) return true;
-        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(), "用户不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.value(), "用户不存在");
 
     }
 
@@ -207,7 +207,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         wrapper.eq(User::getId,id).set(User::getPermission,newper);
         int flag = userMapper.update(null,wrapper);
         if(flag >= 1) return true;
-        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(), "用户不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.value(), "用户不存在");
     }
 
     @Override
@@ -218,7 +218,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         wrapper.eq(User::getId,id).set(User::getMail,newemail);
         int flag = userMapper.update(null,wrapper);
         if(flag >= 1) return true;
-        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(), "用户不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.value(), "用户不存在");
 
     }
 

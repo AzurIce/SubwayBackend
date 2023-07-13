@@ -8,6 +8,7 @@ import com.mtx.metro.exception.ServiceException;
 import com.mtx.metro.mapper.UserMapper;
 import com.mtx.metro.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class UserDetailsServiceImpl extends ServiceImpl<UserMapper, User> implem
         User user = userMapper.selectOne(wrapper);
         //如果查询不到数据就通过抛出异常来给出提示
         if(Objects.isNull(user)){
-            throw new ServiceException(CODE_SERVICE_ERROR,"用户名或密码错误");
+            throw new ServiceException(HttpStatus.FORBIDDEN.value(),"用户名或密码错误");
         }
 
         //TODO 根据用户查询权限信息 添加到LoginUser中

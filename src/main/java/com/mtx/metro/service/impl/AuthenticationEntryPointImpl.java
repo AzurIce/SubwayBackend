@@ -3,6 +3,7 @@ package com.mtx.metro.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.mtx.metro.domain.Result;
 import com.mtx.metro.utils.WebUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ import static com.mtx.metro.constants.CodeConstants.CODE_PERMISSION_ERROR;
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        String json = JSON.toJSONString(Result.error(CODE_PERMISSION_ERROR,"认证失败请重新登录"));
+        String json = JSON.toJSONString(Result.error(HttpStatus.UNAUTHORIZED.value(),"认证失败请重新登录"));
         WebUtils.renderString(response,json);
     }
 }

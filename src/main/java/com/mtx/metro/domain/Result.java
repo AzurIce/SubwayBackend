@@ -17,22 +17,22 @@ import static com.mtx.metro.constants.CodeConstants.CODE_SUCCESS;
 @AllArgsConstructor
 public class Result implements Serializable {
 
-    private String code;//成功还是失败的约定码
+    private int code;//成功还是失败的约定码
     private String msg;//请求失败的原因
     private Object data;//后台所需要携带的数据
 
     //返回一个成功信息
     public static Result success(){
-        return new Result(HttpStatus.OK.toString(), "操作成功",null);
+        return new Result(HttpStatus.OK.value(), "操作成功",null);
     }
 
     //返回一个成功信息
     public static Result success(Object data){
-        return new Result(HttpStatus.OK.toString(),"操作成功",data);
+        return new Result(HttpStatus.OK.value(),"操作成功",data);
     }
 
     //返回一个失败信息
-    public static Result error(String code,String msg){
+    public static Result error(int code,String msg){
         return new Result(code,msg,null);
     }
 

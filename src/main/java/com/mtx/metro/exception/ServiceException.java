@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(code = HttpStatus.PAYMENT_REQUIRED,reason = "this is ServiceException")
 public class ServiceException extends RuntimeException{
     //状态码
-    private String code;
+    private int code;
 
-    public ServiceException(String code, String msg){
+    public ServiceException(int code, String msg){
         super(msg);
         this.code = code;
     }

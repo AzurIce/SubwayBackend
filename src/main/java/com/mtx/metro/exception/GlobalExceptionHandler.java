@@ -26,23 +26,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ServiceException.class)
     @ResponseBody
     public ResponseEntity<Result> handle(ServiceException e){
-        String code = e.getCode();
-        if(code.equals(HttpStatus.OK.toString()))
+        int code = e.getCode();
+        if(code == HttpStatus.OK.value())
             //200
             return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()),HttpStatus.OK);
-        else if(code.equals(HttpStatus.BAD_REQUEST.toString()))
+        else if(code == HttpStatus.BAD_REQUEST.value())
             //400
             return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()), HttpStatus.BAD_REQUEST);
-        else if(code.equals(HttpStatus.UNAUTHORIZED.toString()))
+        else if(code == HttpStatus.UNAUTHORIZED.value())
             //401
             return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()),HttpStatus.UNAUTHORIZED);
-        else if(code.equals(HttpStatus.FORBIDDEN.toString()))
+        else if(code == HttpStatus.FORBIDDEN.value())
             //403
             return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()), HttpStatus.FORBIDDEN);
-        else if(code.equals(HttpStatus.NOT_FOUND.toString()))
+        else if(code == HttpStatus.NOT_FOUND.value())
             //404
             return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()), HttpStatus.NOT_FOUND);
-        else if(code.equals(HttpStatus.INTERNAL_SERVER_ERROR.toString()))
+        else if(code == HttpStatus.INTERNAL_SERVER_ERROR.value())
             //500
             return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         else
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseBody
     public ResponseEntity<Result> handle(ConstraintViolationException e){
-        return ResponseEntity.badRequest().body(Result.error(CODE_PARAMETER_ERROR,e.getMessage()));
+        return ResponseEntity.badRequest().body(Result.error(HttpStatus.BAD_REQUEST.value(),e.getMessage()));
     }
 
     /**
@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public ResponseEntity<Result> handle(MethodArgumentNotValidException e){
-        return ResponseEntity.badRequest().body(Result.error(CODE_PARAMETER_ERROR,e.getBindingResult().getFieldError().getDefaultMessage()));
+        return ResponseEntity.badRequest().body(Result.error(HttpStatus.BAD_REQUEST.value(),e.getBindingResult().getFieldError().getDefaultMessage()));
     }
 
     /**
@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({BindException.class})
     @ResponseBody
     public ResponseEntity<Result> handleBindException(BindException e) {
-        return ResponseEntity.badRequest().body(Result.error(CODE_PARAMETER_ERROR, e.getMessage()));
+        return ResponseEntity.badRequest().body(Result.error(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
     }
 
     /**
@@ -95,6 +95,6 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ResponseEntity<Result> handleConnectionException(RedisConnectionFailureException e){
         //500
-        return ResponseEntity.internalServerError().body(Result.error(CODE_SYSTEM_ERROR,e.getMessage()));
+        return ResponseEntity.internalServerError().body(Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(),e.getMessage()));
     }
 }
