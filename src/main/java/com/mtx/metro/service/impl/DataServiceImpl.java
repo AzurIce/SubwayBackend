@@ -5,13 +5,12 @@ import com.mtx.metro.exception.ServiceException;
 import com.mtx.metro.mapper.DataMapper;
 import com.mtx.metro.service.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-
-import static com.mtx.metro.constants.CodeConstants.CODE_SERVICE_ERROR;
 
 @Service
 public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>> implements DataService {
@@ -21,10 +20,18 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
 
     @Override
     @Transactional
+    public List<Map<String,String>> getAllStationName() {
+        List<Map<String,String>> list = dataMapper.getAllStationName();
+        if(!list.isEmpty()) return list;
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"记录不存在");
+    }
+
+    @Override
+    @Transactional
     public List<Map<String,String>> TrueDataAtTime(String dateTime) {
         List<Map<String,String>> list = dataMapper.TrueDataAtTime(dateTime);
         if(!list.isEmpty()) return list;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"记录不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(), "记录不存在");
     }
 
     @Override
@@ -32,7 +39,7 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     public List<Map<String,String>> TrueDataAtTimeStation(String dateTime,String GTFSid) {
         List<Map<String,String>> list = dataMapper.TrueDataAtTimeStation(dateTime,GTFSid);
         if(!list.isEmpty()) return list;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"记录不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"记录不存在");
     }
 
     @Override
@@ -40,7 +47,7 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     public Map<String,String> getTimeRange() {
         Map<String,String> map = dataMapper.getTimeRange();
         if(!map.isEmpty()) return map;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"记录不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"记录不存在");
     }
 
     @Override
@@ -48,7 +55,7 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     public Map<String,String> getThresholdInfo(String GTFSid) {
         Map<String,String> map = dataMapper.getThresholdInfo(GTFSid);
         if(!map.isEmpty()) return map;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"记录不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"记录不存在");
     }
 
     @Override
@@ -56,7 +63,14 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     public List<Map<String, String>> getWarningInfo(String dateTime) {
         List<Map<String,String>> list = dataMapper.getWarningInfo(dateTime);
         if(!list.isEmpty()) return list;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"记录不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"记录不存在");
+    }
+
+    @Override
+    public List<Map<String, String>> getOverloadInfo(String dateTime) {
+        List<Map<String,String>> list = dataMapper.getOverloadInfo(dateTime);
+        if(!list.isEmpty()) return list;
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"记录不存在");
     }
 
     @Override
@@ -64,7 +78,7 @@ public class DataServiceImpl extends ServiceImpl<DataMapper, Map<String,String>>
     public List<Map<String,String>> PredictDataAtStation(String GTFSid) {
         List<Map<String,String>> list = dataMapper.PredictDataAtStation(GTFSid);
         if(!list.isEmpty()) return list;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"记录不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"记录不存在");
     }
 
 

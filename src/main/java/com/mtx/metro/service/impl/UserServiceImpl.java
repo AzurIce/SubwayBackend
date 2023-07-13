@@ -1,14 +1,10 @@
 package com.mtx.metro.service.impl;
 
-import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mtx.metro.constants.CodeConstants;
 import com.mtx.metro.controller.dto.RegisterDto;
 import com.mtx.metro.controller.dto.UpdateDto;
-import com.mtx.metro.service.UserEmailService;
-import com.mtx.metro.utils.Result;
+import com.mtx.metro.domain.Result;
 import com.mtx.metro.exception.ServiceException;
 import com.mtx.metro.utils.RedisCache;
 import com.mtx.metro.controller.dto.LoginDto;
@@ -18,6 +14,8 @@ import com.mtx.metro.mapper.UserMapper;
 import com.mtx.metro.service.UserService;
 import com.mtx.metro.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,9 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-
-import static com.mtx.metro.constants.CodeConstants.CODE_SERVICE_ERROR;
-import static com.mtx.metro.constants.CodeConstants.CODE_SYSTEM_ERROR;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -54,7 +49,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             one = getOne(wrapper);
         }catch (Exception e){
             log.error(e.toString());
-            throw new ServiceException(CODE_SYSTEM_ERROR,"系统错误");
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "系统错误");
         }return one;
     }
 
@@ -66,21 +61,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             one = getOne(wrapper);
         }catch (Exception e){
             log.error(e.toString());
-            throw new ServiceException(CODE_SYSTEM_ERROR,"系统错误");
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR.toString(),"系统错误");
         }return one;
     }
 
 
     @Override
     @Transactional
-    public Result login(LoginDto loginDto) {
+    public HashMap<String,String> login(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getUname(),loginDto.getPwd());
 
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 
         if(Objects.isNull(authenticate)){
-            throw new ServiceException(CODE_SERVICE_ERROR,"用户名或密码错误");
+            throw new ServiceException(HttpStatus.BAD_REQUEST.toString(), "用户名或密码错误");
         }
         //使用userid生成token
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
@@ -94,12 +89,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         HashMap<String,String> map = new HashMap<>();
         map.put("token",jwt);
         map.put("permission",loginUser.getUser().getPermission());
-        return Result.success(map);
+        return map;
     }
 
     @Override
     @Transactional
-    public Result register(RegisterDto rdto) {
+    public User register(RegisterDto rdto) {
         User one = getUserInfoByName(rdto.getUname());
 
         if(one == null){
@@ -111,9 +106,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 user.setMail(rdto.getEmail());
                 save(user);
             }
-        }else throw new ServiceException(CODE_SERVICE_ERROR,"用户名已存在");
+        }else throw new ServiceException(HttpStatus.FORBIDDEN.toString(), "用户名已存在");
 
-        return Result.success(getUserInfoByName(rdto.getUname()));
+        return getUserInfoByName(rdto.getUname());
     }
 
     @Override
@@ -121,7 +116,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public List<User> getAllUserInfo() {
         List<User> list = userMapper.selectAllUserInfo();
         if(!list.isEmpty()) return list;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"记录不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(), "记录不存在");
     }
 
     @Override
@@ -130,21 +125,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User one = getUserInfoByID(uid);
         if(one != null){
             return userMapper.selectUserByID(uid);
-        }else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
+        }else throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"用户不存在");
     }
 
     @Override
     @Transactional
     public boolean deleteUserById(String uid) {
         User one = getUserInfoByID(uid);
-        if(one == null) throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
+        if(one == null) throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"用户不存在");
         if(one.getName().equals("admin")){
-            throw new ServiceException(CODE_SERVICE_ERROR,"超级管理员admin不允许删除");
+            throw new ServiceException(HttpStatus.FORBIDDEN.toString(),"超级管理员admin不允许删除");
         }
         if(!one.getPermission().equals("3")){
             if(removeById(uid)) return true;
-            else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
-        } else throw new ServiceException(CODE_SERVICE_ERROR,"管理员不可删除,如需删除请修改权限后再删除");
+            else throw new ServiceException(HttpStatus.NOT_FOUND.toString(),"用户不存在");
+        } else throw new ServiceException(HttpStatus.FORBIDDEN.toString(), "管理员不可删除,如需删除请修改权限后再删除");
     }
 
     @Override
@@ -153,7 +148,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String id = ud.getId();
         User user = getUserInfoByID(id);
         if(user.getName().equals("admin")){
-            throw new ServiceException(CODE_SERVICE_ERROR,"超级管理员admin不可更新");
+            throw new ServiceException(HttpStatus.FORBIDDEN.toString(),"超级管理员admin不可更新");
         }
         boolean name = false, per = false, email = false;
 
@@ -164,24 +159,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(!user.getMail().equals(ud.getEmail()))
             email = updateUserEmail(id,ud.getEmail());
         if(name || per || email) return true;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"用户信息没有改变");
+        else throw new ServiceException(HttpStatus.FORBIDDEN.toString(),"用户信息没有改变");
     }
 
     @Override
     @Transactional
     public boolean updateUserName(String id,String newname) {
-//        if(oldname.equals(newname))
-//            throw new ServiceException(CODE_SERVICE_ERROR,"新名称与原名称相同");
 
         User one = getUserInfoByName(newname);
         if(one != null)
-            throw new ServiceException(CODE_SERVICE_ERROR,"该用户名已存在");
+            throw new ServiceException(HttpStatus.BAD_REQUEST.toString(),"该用户名已存在");
 
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId,id).set(User::getName,newname);
         int flag = userMapper.update(null,wrapper);
         if(flag >= 1) return true;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(), "用户不存在");
     }
 
     @Override
@@ -191,9 +184,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         User user = getUserInfoByID(id);
         if(!passwordEncoder.matches(oldpwd,user.getPassword()))
-            throw new ServiceException(CODE_SERVICE_ERROR,"原密码输入错误");
+            throw new ServiceException(HttpStatus.FORBIDDEN.toString(),"原密码输入错误");
         if(newpwd.equals(oldpwd))
-            throw new ServiceException(CODE_SERVICE_ERROR,"新密码与原密码相同");
+            throw new ServiceException(HttpStatus.FORBIDDEN.toString(),"新密码与原密码相同");
 
         String token = passwordEncoder.encode(newpwd);
 
@@ -202,45 +195,41 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         int flag = userMapper.update(null,wrapper);
         if(flag >= 1) return true;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(), "用户不存在");
 
     }
 
     @Override
     @Transactional
     public boolean updateUserPer(String id, String newper) {
-//        if(oldper.equals(newper))
-//            throw new ServiceException(CODE_SERVICE_ERROR,"新权限与原权限相同");
 
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId,id).set(User::getPermission,newper);
         int flag = userMapper.update(null,wrapper);
         if(flag >= 1) return true;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(), "用户不存在");
     }
 
     @Override
     @Transactional
     public boolean updateUserEmail(String id,String newemail) {
-//        if(oldmail.equals(newemail))
-//            throw new ServiceException(CODE_SERVICE_ERROR,"新邮箱与原邮箱相同");
 
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(User::getId,id).set(User::getMail,newemail);
         int flag = userMapper.update(null,wrapper);
         if(flag >= 1) return true;
-        else throw new ServiceException(CODE_SERVICE_ERROR,"用户不存在");
+        else throw new ServiceException(HttpStatus.NOT_FOUND.toString(), "用户不存在");
 
     }
 
     @Override
     @Transactional
-    public Result logout() {
+    public String logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         String userid = loginUser.getUser().getId();
         redisCache.deleteObject("login:" + userid);
-        return Result.success("退出成功");
+        return "退出成功";
     }
 }
 

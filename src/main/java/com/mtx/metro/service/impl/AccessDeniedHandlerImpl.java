@@ -1,7 +1,7 @@
 package com.mtx.metro.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.mtx.metro.utils.Result;
+import com.mtx.metro.domain.Result;
 import com.mtx.metro.utils.WebUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

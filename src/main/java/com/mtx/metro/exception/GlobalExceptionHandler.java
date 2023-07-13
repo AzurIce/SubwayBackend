@@ -1,17 +1,17 @@
 package com.mtx.metro.exception;
 
-import com.mtx.metro.utils.Result;
+import com.mtx.metro.domain.Result;
 
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.ConstraintViolationException;
 import java.net.BindException;
 
-import static com.mtx.metro.constants.CodeConstants.CODE_PARAMETER_ERROR;
-import static com.mtx.metro.constants.CodeConstants.CODE_SYSTEM_ERROR;
+import static com.mtx.metro.constants.CodeConstants.*;
 
 //全局异常处理器
 @ControllerAdvice
@@ -25,8 +25,29 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ServiceException.class)
     @ResponseBody
-    public Result handle(ServiceException e){
-        return Result.error(e.getCode(),e.getMessage());
+    public ResponseEntity<Result> handle(ServiceException e){
+        String code = e.getCode();
+        if(code.equals(HttpStatus.OK.toString()))
+            //200
+            return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()),HttpStatus.OK);
+        else if(code.equals(HttpStatus.BAD_REQUEST.toString()))
+            //400
+            return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()), HttpStatus.BAD_REQUEST);
+        else if(code.equals(HttpStatus.UNAUTHORIZED.toString()))
+            //401
+            return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()),HttpStatus.UNAUTHORIZED);
+        else if(code.equals(HttpStatus.FORBIDDEN.toString()))
+            //403
+            return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()), HttpStatus.FORBIDDEN);
+        else if(code.equals(HttpStatus.NOT_FOUND.toString()))
+            //404
+            return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()), HttpStatus.NOT_FOUND);
+        else if(code.equals(HttpStatus.INTERNAL_SERVER_ERROR.toString()))
+            //500
+            return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        else
+            //501
+            return new ResponseEntity<>(Result.error(e.getCode(),e.getMessage()), HttpStatus.NOT_IMPLEMENTED);
     }
 
     /**
@@ -37,8 +58,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseBody
-    public Result handle(ConstraintViolationException e){
-        return Result.error(CODE_PARAMETER_ERROR,e.getMessage());
+    public ResponseEntity<Result> handle(ConstraintViolationException e){
+        return ResponseEntity.badRequest().body(Result.error(CODE_PARAMETER_ERROR,e.getMessage()));
     }
 
     /**
@@ -49,8 +70,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public Result handle(MethodArgumentNotValidException e){
-        return Result.error(CODE_PARAMETER_ERROR,e.getBindingResult().getFieldError().getDefaultMessage());
+    public ResponseEntity<Result> handle(MethodArgumentNotValidException e){
+        return ResponseEntity.badRequest().body(Result.error(CODE_PARAMETER_ERROR,e.getBindingResult().getFieldError().getDefaultMessage()));
     }
 
     /**
@@ -61,8 +82,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({BindException.class})
     @ResponseBody
-    public Result handleBindException(BindException e) {
-        return Result.error(CODE_PARAMETER_ERROR, e.getMessage());
+    public ResponseEntity<Result> handleBindException(BindException e) {
+        return ResponseEntity.badRequest().body(Result.error(CODE_PARAMETER_ERROR, e.getMessage()));
     }
 
     /**
@@ -72,7 +93,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({RedisConnectionFailureException.class})
     @ResponseBody
-    public Result handleConnectionException(RedisConnectionFailureException e){
-        return Result.error(CODE_SYSTEM_ERROR,e.getMessage());
+    public ResponseEntity<Result> handleConnectionException(RedisConnectionFailureException e){
+        //500
+        return ResponseEntity.internalServerError().body(Result.error(CODE_SYSTEM_ERROR,e.getMessage()));
     }
 }

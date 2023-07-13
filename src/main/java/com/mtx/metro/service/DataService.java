@@ -7,6 +7,8 @@ import java.util.Map;
 
 public interface DataService extends IService<Map<String,String>> {
 
+    List<Map<String,String>> getAllStationName();
+
     List<Map<String,String>> TrueDataAtTime(String dateTime);
 
     List<Map<String,String>> TrueDataAtTimeStation(String dateTime,String GTFSid);
@@ -19,4 +21,5 @@ public interface DataService extends IService<Map<String,String>> {
 
     List<Map<String, String>> getWarningInfo(String dateTime);
 
+    List<Map<String, String>> getOverloadInfo(String dateTime);
 }

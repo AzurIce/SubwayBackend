@@ -2,6 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http#{//mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mtx.metro.mapper.DataMapper">
 
+<!--    //查询所有站点名称-->
+<!--    List<Map<String,String>> getAllStationName();-->
+    <select id="getAllStationName" resultType="Map">
+        SELECT * FROM id_map
+    </select>
+
 <!--    //查询所有真实数据
     List<Map<String,String>> TrueDataAtTime(@Param("dateTime") String dateTime);-->
     <select id="TrueDataAtTime" resultType="Map">
@@ -52,6 +58,16 @@
         FROM TooManyWarning a, id_map b
         WHERE a.id = b.id
         AND dateTime = #{dateTime}
+    </select>
+
+<!--    //查询某时间所有过载站点信息-->
+<!--    List<Map<String,String>> getOverloadInfo(@Param("dateTime") String dateTime);-->
+    <select id="getOverloadInfo" resultType="Map">
+        SELECT a.id AS id, dateTime, tEntries, tExits
+        FROM TrueData a, Threshold b
+        WHERE a.id = b.id
+        AND dateTime = #{dateTime}
+        AND tEntries > avg_entries * 2 OR tExits > avg_exits * 2
     </select>
 
 </mapper>

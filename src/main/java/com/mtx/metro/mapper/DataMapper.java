@@ -14,6 +14,9 @@ import java.util.Map;
 @Component
 public interface DataMapper extends BaseMapper<Map<String,String>> {
 
+    //查询所有站点名称
+    List<Map<String,String>> getAllStationName();
+
     //查询所有真实数据
     List<Map<String,String>> TrueDataAtTime(@Param("dateTime") String dateTime);
 
@@ -31,4 +34,7 @@ public interface DataMapper extends BaseMapper<Map<String,String>> {
 
     //查询某日期时间的流量预警信息
     List<Map<String,String>> getWarningInfo(@Param("dateTime") String dateTime);
+
+    //查询某时间所有过载站点信息
+    List<Map<String,String>> getOverloadInfo(@Param("dateTime") String dateTime);
 }
